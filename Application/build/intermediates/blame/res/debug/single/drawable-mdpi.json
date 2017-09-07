@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/res/merged/debug/drawable-mdpi/ic_action_refresh.png",
+        "source": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/src/main/res/drawable-mdpi/ic_action_refresh.png"
+    },
+    {
+        "merged": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/res/merged/debug/drawable-mdpi/ic_launcher.png",
+        "source": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/src/main/res/drawable-mdpi/ic_launcher.png"
+    }
+]

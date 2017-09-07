@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/819b95c133a2d440f2f3a61d829f510433aec0d6/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="150252b33b00274cc868578ade018fda0d43a3eb">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_7a6faf0241926d21aeabdd710e779101c15780af/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.3.1_2d13f5ce532eef869136407c97cfa06a45e01b19/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/e1e98ae0287ab7bc121422cb36e3d1e1becd6465/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="efb8cb62d47d157c29d1521daac7eefd4cb881ee">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b26ac85dbee4a52ea63ba19a805b9fabee09058b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/da764abc931863e40c768d4ea570312d4dac2ce8/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ac6b5201c9b60391fbc502d3450b6c936f7dd8f9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/f23b9803301efcced02bac20dd36cb8aac1c4143/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="6ef31f1555bb4cc513ec8d52711365a8b89f3600">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_789fd5c3b6b1cce15aceb971f24fc078e29d4cc8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="a1edb35621740a14b976d26f07dd815ae58cc125">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_9a04f903bed2d544dcfc974815569241fcce180a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/5af9612d1f2d64be256ef017ed34fae325ff4a94/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_af3e6e7b8b8bd4eea53682bb22b042abfde3aa17/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/aa7a662ff9b6dca8e159305afaf40cd2e2d2b824/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9c86fd4fef3f3973ac9025522476cf4aef3e531d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_9fe7e70ceede596acc6749513834e96c097a8979/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/314a7e73161d296e1b6e8f9b900cc8efb7ea112e/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="914f5d3e3ace66080e59613708f06d129a222e25">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_453376ff40bac48ed209e48bbcd618755e74f5df/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/08fad4339e476f7547b1542d5590af68859ad044/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_5e0adae40e2e0b1752e29a82c04144882586501b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/4547c71b0022b268b7335f7c06d446185279e918/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_736b8a95ba26f1e285c2764bac39f4721124ad31/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/7b10d52141e6a64647204fb7fd0cb797ed13d850/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="8531f2d46b35de75e6130f25830e0c2c0d6bb98c">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0f51bc857daaeeb04070e947bc96eeb25e8cb2c1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/blitz/.android/build-cache/50334aa6d95f81c333ba61850958dc77db238f4a/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
+        <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10/classes_05956b8f221e9f0cce5169729b9fd3cda6c14fe1/classes.dex" />
+    </item>
+
+</items>

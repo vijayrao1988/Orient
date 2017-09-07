@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/res/merged/debug/drawable-hdpi/tile.9.png",
+        "source": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/src/main/res/drawable-hdpi/tile.9.png"
+    },
+    {
+        "merged": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/res/merged/debug/drawable-hdpi/ic_launcher.png",
+        "source": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/src/main/res/drawable-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/res/merged/debug/drawable-hdpi/ic_action_refresh.png",
+        "source": "/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/src/main/res/drawable-hdpi/ic_action_refresh.png"
+    }
+]
