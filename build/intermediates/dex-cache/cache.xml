@@ -52,7 +52,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.3"
-        sha1="a1edb35621740a14b976d26f07dd815ae58cc125">
+        sha1="8b9202275f83dbb28aa3a23b6cda4d26c50dfc69">
         <dex dex="/Users/blitz/AndroidStudioProjects/BluetoothAdvertisements/Application/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_9a04f903bed2d544dcfc974815569241fcce180a/classes.dex" />
     </item>
     <item

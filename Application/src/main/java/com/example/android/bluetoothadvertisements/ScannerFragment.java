@@ -22,12 +22,18 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +45,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,6 +54,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.example.android.bluetoothadvertisements.ScanResultAdapter;
+
+import static android.content.Context.BIND_AUTO_CREATE;
+import static android.os.Build.VERSION.SDK;
+import static android.os.Build.VERSION.SDK_INT;
 
 
 /**
@@ -58,11 +70,13 @@ public class ScannerFragment extends ListFragment {
     /**
      * Stops scanning after 5 seconds.
      */
-    private static final long SCAN_PERIOD = 1000;
+    private static final long SCAN_PERIOD = 5000;
 
     private BluetoothAdapter mBluetoothAdapter;
 
     private BluetoothLeScanner mBluetoothLeScanner;
+
+    private BluetoothLeService mBluetoothLeService;
 
     private ScanCallback mScanCallback;
 
@@ -73,6 +87,10 @@ public class ScannerFragment extends ListFragment {
     private boolean permissions_granted = false;
 
     private static final int REQUEST_LOCATION = 0;
+
+    private static boolean mScanning = false;
+
+    private Switch switchReceive;
 
 
 
@@ -97,9 +115,12 @@ public class ScannerFragment extends ListFragment {
         //
         // We could get a LayoutInflater from the ApplicationContext but it messes with the
         // default theme, so generate it from getActivity() and pass it in separately.
+
+        //This uses the ScanResultAdapter
         mAdapter = new ScanResultAdapter(getActivity().getApplicationContext(),
                 LayoutInflater.from(getActivity()));
-        mHandler = new Handler();
+        //This uses the LeDeviceListAdapater
+        //mAdapter = new LeDeviceListAdapter(getActivity().getApplicationContext(), LayoutInflater.from(getActivity()));
 
     }
 
@@ -110,6 +131,7 @@ public class ScannerFragment extends ListFragment {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
 
         setListAdapter(mAdapter);
+
 
         return view;
     }
@@ -124,7 +146,7 @@ public class ScannerFragment extends ListFragment {
         setEmptyText(getString(R.string.empty_list));
 
         // Trigger refresh on app's 1st load
-        startScanning();
+        //startScanning();
 
     }
 
@@ -154,6 +176,10 @@ public class ScannerFragment extends ListFragment {
         if (mScanCallback == null) {
             Log.d(TAG, "Starting Scanning");
 
+            mScanning = true;
+
+            mHandler = new Handler();
+
             // Will stop the scanning after a set time.
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -168,10 +194,10 @@ public class ScannerFragment extends ListFragment {
             mBluetoothLeScanner.startScan(buildScanFilters(), buildScanSettings(), mScanCallback);
             //mBluetoothLeScanner.startScan(mScanCallback);
 
-            String toastText = getString(R.string.scan_start_toast) + " "
+            /*String toastText = getString(R.string.scan_start_toast) + " "
                     + TimeUnit.SECONDS.convert(SCAN_PERIOD, TimeUnit.MILLISECONDS) + " "
                     + getString(R.string.seconds);
-            Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();*/
         } else {
             Toast.makeText(getActivity(), R.string.already_scanning, Toast.LENGTH_SHORT);
         }
@@ -181,19 +207,26 @@ public class ScannerFragment extends ListFragment {
      * Stop scanning for BLE Advertisements.
      */
     public void stopScanning() {
-        Log.d(TAG, "Stopping Scanning");
+        if (mScanning == true) {
+            Log.d(TAG, "Stopping Scanning");
 
-        // Stop the scan, wipe the callback.
-        mBluetoothLeScanner.stopScan(mScanCallback);
-        mScanCallback = null;
+            mScanning = false;
 
-        // Even if no new results, update 'last seen' times.
-        mAdapter.notifyDataSetChanged();
+            // Flush results of scanning before stopping the ble scan
+            mBluetoothLeScanner.flushPendingScanResults(mScanCallback);
 
-        String toastText = getString(R.string.scan_stop_toast) + " "
-                + TimeUnit.SECONDS.convert(SCAN_PERIOD, TimeUnit.MILLISECONDS) + " "
-                + getString(R.string.seconds);
-        Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+            // Stop the scan, wipe the callback.
+            mBluetoothLeScanner.stopScan(mScanCallback);
+            mScanCallback = null;
+
+            // Even if no new results, update 'last seen' times.
+            mAdapter.notifyDataSetChanged();
+
+            /*String toastText = getString(R.string.scan_stop_toast) + " "
+                    + TimeUnit.SECONDS.convert(SCAN_PERIOD, TimeUnit.MILLISECONDS) + " "
+                    + getString(R.string.seconds);
+            Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();*/
+        }
     }
 
     /**
@@ -215,9 +248,11 @@ public class ScannerFragment extends ListFragment {
      */
     private ScanSettings buildScanSettings() {
         ScanSettings.Builder builder = new ScanSettings.Builder();
-        builder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
-        builder.setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT);
-        builder.setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE);
+        builder.setScanMode(ScanSettings.SCAN_MODE_BALANCED);
+        if(Build.VERSION.SDK_INT >= 23) {
+            builder.setNumOfMatches(ScanSettings.MATCH_NUM_MAX_ADVERTISEMENT);
+            builder.setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE);
+        }
         return builder.build();
     }
 
@@ -240,8 +275,13 @@ public class ScannerFragment extends ListFragment {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            mAdapter.add(result);
-            mAdapter.notifyDataSetChanged();
+            //TODO: Add If condition to check if the device is an orient device. The scan result should be added
+            //to the list only if it is an orient device.
+            byte[] scanRecord = result.getScanRecord().getBytes();
+            if((scanRecord[8] == 'a')&&(scanRecord[9] == 'b')&&(scanRecord[10] == 'c')) {
+                mAdapter.add(result);
+                mAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -250,6 +290,31 @@ public class ScannerFragment extends ListFragment {
             Toast.makeText(getActivity(), "Scan failed with error: " + errorCode, Toast.LENGTH_LONG)
                     .show();
         }
+    }
+
+    public void onListItemClick(ListView l, View v, int position, long id) {
+
+        //final BluetoothDevice device = mAdapter.getItem(position).getDevice(position);
+        final BluetoothDevice device = mAdapter.getItemDevice(position);
+        if (device == null) return;
+        else Toast.makeText(getActivity(), "Device found:" + device.getAddress().toString(), Toast.LENGTH_LONG).show();
+        //final Intent intent = new Intent(this.getActivity(), DeviceControlActivity.class);
+        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+
+        if (mScanning) {
+            //mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            stopScanning();
+            mScanning = false;
+        }
+        //startActivity(intent);
+        MainActivity.showMsg(device.getAddress().toString());
+        MainActivity.initializeOrientTransfer(device.getAddress().toString());
+    }
+
+    public void clearScanResult () {
+        mAdapter.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
 }

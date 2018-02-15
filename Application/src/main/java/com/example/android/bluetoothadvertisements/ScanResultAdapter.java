@@ -16,24 +16,32 @@
 
 package com.example.android.bluetoothadvertisements;
 
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.content.Intent;
 import android.os.SystemClock;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+import static android.R.attr.matchOrder;
+import static android.R.attr.name;
 
 /**
  * Holds and displays {@link ScanResult}s, used by {@link ScannerFragment}.
  */
 public class ScanResultAdapter extends BaseAdapter {
 
-    private ArrayList<ScanResult> mArrayList;
+    static private ArrayList<ScanResult> mArrayList;
 
     private Context mContext;
 
@@ -47,7 +55,7 @@ public class ScanResultAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
+    public int getCount(){
         return mArrayList.size();
     }
 
@@ -61,6 +69,10 @@ public class ScanResultAdapter extends BaseAdapter {
         return mArrayList.get(position).getDevice().getAddress().hashCode();
     }
 
+    public BluetoothDevice getItemDevice(int position) {
+        return mArrayList.get(position).getDevice();
+    }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
 
@@ -71,18 +83,46 @@ public class ScanResultAdapter extends BaseAdapter {
 
         TextView deviceNameView = (TextView) view.findViewById(R.id.device_name);
         TextView deviceAddressView = (TextView) view.findViewById(R.id.device_address);
-        TextView lastSeenView = (TextView) view.findViewById(R.id.last_seen);
+        //TextView lastSeenView = (TextView) view.findViewById(R.id.last_seen);
+        TextView orientOsiView = (TextView) view.findViewById(R.id.orientOsi);
+        TextView orientTscView = (TextView) view.findViewById(R.id.orientTsc);
+        TextView orientTsdView = (TextView) view.findViewById(R.id.orientTsd);
+
 
         ScanResult scanResult = mArrayList.get(position);
+        byte[] scanRecord = scanResult.getScanRecord().getBytes();
+        final StringBuilder stringBuilder = new StringBuilder(scanRecord.length);
+
+        for(byte byteChar : scanRecord) {
+            stringBuilder.append((char) byteChar);
+        }
+
+        String advData = stringBuilder.toString();
 
         String name = scanResult.getDevice().getName();
         if (name == null) {
             name = mContext.getResources().getString(R.string.no_name);
         }
+
+
         deviceNameView.setText(name);
         deviceAddressView.setText(scanResult.getDevice().getAddress());
-        lastSeenView.setText(getTimeSinceString(mContext, scanResult.getTimestampNanos()));
+        //lastSeenView.setText(getTimeSinceString(mContext, scanResult.getTimestampNanos()));
 
+        int osi = 65535;
+        int tsc = 65535;
+        int tsd = 65535;
+        if(scanRecord[8]=='a'&&scanRecord[9]=='b'&&scanRecord[10]=='c') {
+            int manufacturerDataLength = scanRecord[7];
+            //osi, tsc and tsd are transmitted in unsigned byte arrays. these carry values from -128 to 127. so add 128 to correct the values.
+
+            osi = ((scanRecord[11] + 128) * 256) + scanRecord[12] + 128;
+            tsc = ((scanRecord[13] + 128) * 256) + scanRecord[14] + 128;
+            tsd = ((scanRecord[15] + 128) * 256) + scanRecord[16] + 128;
+            orientOsiView.setText(String.valueOf(osi));
+            orientTscView.setText(String.valueOf(tsc));
+            orientTsdView.setText(String.valueOf(tsd));
+        }
         return view;
     }
 

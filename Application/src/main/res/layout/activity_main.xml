@@ -14,42 +14,190 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/sample_main_layout">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sample_main_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp">
+
+
+            <CheckBox
+                android:id="@+id/checkboxSink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="changeStatus"
+                android:text="Sink" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="82dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="10"
+                android:progress="4"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="16dp"
+            tools:text="Console" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/labelStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_orange_dark"
+                android:text="Status" />
+
+            <TextView
+                android:id="@+id/displayStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_orange_dark"
+                android:text="sensor" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/labelOSI"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_dark"
+                android:text="OSI" />
+
+            <TextView
+                android:id="@+id/displayOSI"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_dark"
+                android:text="65535" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/labelTSC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_dark"
+                android:text="TSC" />
+
+            <TextView
+                android:id="@+id/displayTSC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_dark"
+                android:text="65535" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/labelTSD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_dark"
+                android:text="TSD" />
+
+            <TextView
+                android:id="@+id/displayTSD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_dark"
+                android:text="65535" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/scanner_fragment_container"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0px" >
+        android:layout_height="0px"
+        android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/error_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:freezesText="true" />
+        <TextView
+            android:id="@+id/error_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:freezesText="true" />
 
-        </FrameLayout>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/advertiser_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!--<fragment-->
-        <!--android:name="com.example.android.bluetoothadvertisements.ScannerFragment"-->
-        <!--android:id="@+id/scanner_fragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
 
     <!--<fragment-->
-        <!--android:name="com.example.android.bluetoothadvertisements.AdvertiserFragment"-->
-        <!--android:id="@+id/advertiser_fragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
+    <!--android:name="com.example.android.bluetoothadvertisements.ScannerFragment"-->
+    <!--android:id="@+id/scanner_fragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content" />-->
+
+    <!--<fragment-->
+    <!--android:name="com.example.android.bluetoothadvertisements.AdvertiserFragment"-->
+    <!--android:id="@+id/advertiser_fragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content" />-->
 
 </LinearLayout>
