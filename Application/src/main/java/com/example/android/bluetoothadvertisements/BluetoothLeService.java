@@ -299,32 +299,43 @@ public class BluetoothLeService extends Service {
             return(false);
         }
         /*check if orient service is available on the device*/
-        BluetoothGattService mCustomService = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
-        if(mCustomService == null){
+        BluetoothGattService mOrientService = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
+        if(mOrientService == null){
             Log.w(TAG, "Custom BLE Service not found");
             return(false);
         }
 
-        byte[] writeBuffer = new byte[2];
+        byte[] writeBuffer = new byte[4];
 
         //First prepare and write OSI
         int nextOrientationIndex = iOSI + 1;
+        int myTSC = iTSC;
         int iNOSIMSB;
         int iNOSILSB;
+        int iMYTSCMSB;
+        int iMYTSCLSB;
         byte bNOSIMSB;
         byte bNOSILSB;
+        byte bMYTSCMSB;
+        byte bMYTSCLSB;
         iNOSIMSB = nextOrientationIndex / 256;
         iNOSILSB = nextOrientationIndex % 256;
+        iMYTSCMSB = myTSC / 256;
+        iMYTSCLSB = myTSC % 256;
         bNOSIMSB = (byte) (iNOSIMSB - 128);
         bNOSILSB = (byte) (iNOSILSB - 128);
+        bMYTSCMSB = (byte) (iMYTSCMSB - 128);
+        bMYTSCLSB = (byte) (iMYTSCLSB - 128);
         writeBuffer[0] = bNOSIMSB;
         writeBuffer[1] = bNOSILSB;
+        writeBuffer[2] = bMYTSCMSB;
+        writeBuffer[3] = bMYTSCLSB;
 
         /* OSI Characteristic UUID
         public static UUID OSI_CHARACTERISTIC = UUID.fromString("8f0048be-a048-40c8-9454-588e5d1e7423");*/
 
         /*get the read characteristic from the service*/
-        BluetoothGattCharacteristic mWriteCharacteristic = mCustomService.getCharacteristic(OrientProfile.OSI_CHARACTERISTIC);
+        BluetoothGattCharacteristic mWriteCharacteristic = mOrientService.getCharacteristic(OrientProfile.OSI_CHARACTERISTIC);
         mWriteCharacteristic.setValue(writeBuffer);
         if(mBluetoothGatt.writeCharacteristic(mWriteCharacteristic) == false){
             Log.w(TAG, "Failed to write characteristic");

@@ -70,7 +70,7 @@ public class ScannerFragment extends ListFragment {
     /**
      * Stops scanning after 5 seconds.
      */
-    private static final long SCAN_PERIOD = 5000;
+    private static final long SCAN_PERIOD = 9500;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -275,7 +275,7 @@ public class ScannerFragment extends ListFragment {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            //TODO: Add If condition to check if the device is an orient device. The scan result should be added
+            //If condition to check if the device is an orient device. The scan result should be added
             //to the list only if it is an orient device.
             byte[] scanRecord = result.getScanRecord().getBytes();
             if((scanRecord[8] == 'a')&&(scanRecord[9] == 'b')&&(scanRecord[10] == 'c')) {

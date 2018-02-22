@@ -110,9 +110,9 @@ public class MainActivity extends FragmentActivity {
 
     private byte[] serverBuffer = new byte[2];
 
-    public static int iTSC = 65530;
-    public static int iTSD = 65530;
-    public static int iOSI = 65530;
+    public static int iTSC = 65535;
+    public static int iTSD = 65535;
+    public static int iOSI = 65535;
     public static int iStatus = 0;
     //0 = sensor, 1 = sink, 2 = relay
     public static int iSubstatus = 0;
@@ -523,14 +523,22 @@ public class MainActivity extends FragmentActivity {
                                                  boolean responseNeeded,
                                                  int offset, byte[] data) {
             if (characteristic.getUuid().equals(OrientProfile.OSI_CHARACTERISTIC)) {
-                iOSI = (data[0]+128);
-                iTSC = (data[1]+128);
-                iTSD = ((data[0]+128) * 256) + data[1] + 128;
-                showMsg("OSI written - callback " + Integer.toString(data[0]+128) + " "  + Integer.toString(data[1]+128));
+                //set the OSI to the value received from the sink/relay. The sink/relay increments its own OSI value and sends it.
+                iOSI = ((data[0]+128) * 256) + data[1] + 128;
+                //set the TSC  to the value received from the sink/relay. The sink/relay replicates its own TSC value onto the next node.
+                iTSC = ((data[0]+128) * 256) + data[1] + 128;
+                //set the TSD to zero as a connection has just been established.
+                iTSD = 0;
+                iStatus = 2;    //Move status of the device to RELAY.
+                showMsg("OSI and TSC written " + Integer.toString(data[0]+128) + " "  + Integer.toString(data[1]+128));
 
             }
 
+            //update the screen with the updated values of OSI, TSC and TSD.
             updateLocalUi();
+
+            //start advertising the updated values of OSI, TSC and TSD.
+
 
             mBluetoothGattServer.sendResponse(device,
                     requestId,
@@ -656,9 +664,9 @@ public class MainActivity extends FragmentActivity {
         else {
             stopScanning();
 
-            iOSI = 65530;
-            iTSC = 65530;
-            iTSD = 65530;
+            iOSI = 65535;
+            iTSC = 65535;
+            iTSD = 65535;
             iStatus = 0;
             orientTasksProgress = 0;
 
@@ -697,8 +705,13 @@ public class MainActivity extends FragmentActivity {
 
     Runnable orientTasks = new Runnable() {
         public void run() {
+            orientTasksHandler.postDelayed(orientTasks, 1000);
             switch (iStatus) {
                 case 0: //sensor
+                    if(iTSD<60) {
+                        iTSD++;
+                        iTSC++;
+                    }
                     updateLocalUi();
                     break;
 
@@ -707,13 +720,13 @@ public class MainActivity extends FragmentActivity {
                     ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
                     showMsg("Devices Found: " + String.valueOf(mAdapter.getCount()));
                     switch (orientTasksProgress) {
-                        case 1:
+                        case 0:
                             showMsg("Scanning started");
                             scannerFragment.clearScanResult();
                             startScanning();
                             break;
 
-                        case 6:
+                        case 9:
                             //analyse list of ble devices
                             //connect with these devices
                             //write to the gatt server of these devices
@@ -735,7 +748,16 @@ public class MainActivity extends FragmentActivity {
                     break;
 
                 case 2: //relay
-
+                    if(iTSC<60)
+                    {
+                        iTSC++;
+                    }
+                    else
+                    {
+                        iStatus = 0;
+                        iTSD = 0;
+                    }
+                    updateLocalUi();
                     break;
 
                 default:
@@ -743,7 +765,6 @@ public class MainActivity extends FragmentActivity {
 
             }
 
-            orientTasksHandler.postDelayed(orientTasks, 1000);
         }
     };
 

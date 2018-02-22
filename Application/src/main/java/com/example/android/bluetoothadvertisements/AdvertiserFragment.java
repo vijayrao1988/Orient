@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,9 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
      * Lets user toggle BLE Advertising.
      */
     private Switch mSwitch;
+    private boolean advertising = false;
+    private Handler advertisementRefreshHandler;
+    private int advertisingPhase = 0;
 
     /**
      * Listens for notifications that the {@code AdvertiserService} has failed to start advertising.
@@ -92,6 +96,9 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
                 Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
             }
         };
+
+        advertisementRefreshHandler = new Handler();
+
     }
 
     @Override
@@ -151,8 +158,11 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
         boolean on = ((Switch) v).isChecked();
 
         if (on) {
-            startAdvertising();
+            advertising = true;
+            advertisingPhase = 0;
+            advertisementRefresher.run(); //This call starts running advertisementRefresher continually with auto callbacks
         } else {
+            advertising = false;
             stopAdvertising();
         }
     }
@@ -172,6 +182,30 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
         Context c = getActivity();
         c.stopService(getServiceIntent(c));
         mSwitch.setChecked(false);
+        advertising = false;
     }
+
+    Runnable advertisementRefresher = new Runnable() {
+        public void run() {
+            if(advertising) {
+                if (advertisingPhase == 0) {
+                    //this is the advertising on duration
+                    Context c = getActivity();
+                    c.startService(getServiceIntent(c));
+                    advertisingPhase = 1;
+                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 1000);
+                } else {
+                    //this is the advertising off duration
+                    Context c = getActivity();
+                    c.stopService(getServiceIntent(c));
+                    advertisingPhase = 0;
+                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 9000);
+                }
+            }
+            else {
+                stopAdvertising();
+            }
+        }
+    };
 
 }
