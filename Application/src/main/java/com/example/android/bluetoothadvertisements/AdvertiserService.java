@@ -72,7 +72,7 @@ public class AdvertiserService extends Service {
 
     private Runnable timeoutRunnable;
 
-    private byte[] orientParameters = new byte[10];
+    private byte[] orientParameters = new byte[5];
 
     /**
      * Length of time to allow advertising before automatically shutting off. (10 minutes)
@@ -212,32 +212,16 @@ public class AdvertiserService extends Service {
          */
 
         AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
-        //dataBuilder.addServiceUuid(Constants.Service_UUID);
+        dataBuilder.addServiceUuid(Constants.Service_UUID);
         dataBuilder.setIncludeDeviceName(false);
         dataBuilder.setIncludeTxPowerLevel(false);
 
-        orientParameters[0] = 10;
-        orientParameters[1] = 'a';
-        orientParameters[2] = 'b';
-        orientParameters[3] = 'c';
-        iOSIMSB = iOSI / 256;
-        iOSILSB = iOSI % 256;
-        bOSIMSB = (byte) (iOSIMSB - 128);
-        bOSILSB = (byte) (iOSILSB - 128);
-        orientParameters[4] = bOSIMSB;
-        orientParameters[5] = bOSILSB;
-        iTSCMSB = iTSC / 256;
-        iTSCLSB = iTSC % 256;
-        bTSCMSB = (byte) (iTSCMSB - 128);
-        bTSCLSB = (byte) (iTSCLSB - 128);
-        orientParameters[6] = bTSCMSB;
-        orientParameters[7] = bTSCLSB;
-        iTSDMSB = iTSD / 256;
-        iTSDLSB = iTSD % 256;
-        bTSDMSB = (byte) (iTSDMSB - 128);
-        bTSDLSB = (byte) (iTSDLSB - 128);
-        orientParameters[8] = bTSDMSB;
-        orientParameters[9] = bTSDLSB;
+
+        orientParameters[0] = 'a';
+        orientParameters[1] = 'b';
+        orientParameters[2] = (byte) iOSI;
+        orientParameters[3] = (byte) iTSC;
+        orientParameters[4] = (byte) iTSD;
 
         /*String orientParametersString = "abc";
         orientParameters = new byte[orientParametersString.getBytes().length + 1];
@@ -261,6 +245,7 @@ public class AdvertiserService extends Service {
         settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY);
         settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH);
         settingsBuilder.setTimeout(0);
+        settingsBuilder.setConnectable(true);
         return settingsBuilder.build();
     }
 

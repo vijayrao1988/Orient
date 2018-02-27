@@ -159,8 +159,9 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
 
         if (on) {
             advertising = true;
-            advertisingPhase = 0;
-            advertisementRefresher.run(); //This call starts running advertisementRefresher continually with auto callbacks
+            startAdvertising();
+            //advertisingPhase = 0;
+            //advertisementRefresher.run(); //This call starts running advertisementRefresher continually with auto callbacks
         } else {
             advertising = false;
             stopAdvertising();
@@ -193,13 +194,13 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
                     Context c = getActivity();
                     c.startService(getServiceIntent(c));
                     advertisingPhase = 1;
-                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 1000);
+                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 5000);
                 } else {
                     //this is the advertising off duration
                     Context c = getActivity();
                     c.stopService(getServiceIntent(c));
                     advertisingPhase = 0;
-                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 9000);
+                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 5000);
                 }
             }
             else {

@@ -112,13 +112,12 @@ public class ScanResultAdapter extends BaseAdapter {
         int osi = 65535;
         int tsc = 65535;
         int tsd = 65535;
-        if(scanRecord[8]=='a'&&scanRecord[9]=='b'&&scanRecord[10]=='c') {
-            int manufacturerDataLength = scanRecord[7];
-            //osi, tsc and tsd are transmitted in unsigned byte arrays. these carry values from -128 to 127. so add 128 to correct the values.
 
-            osi = ((scanRecord[11] + 128) * 256) + scanRecord[12] + 128;
-            tsc = ((scanRecord[13] + 128) * 256) + scanRecord[14] + 128;
-            tsd = ((scanRecord[15] + 128) * 256) + scanRecord[16] + 128;
+        if(scanRecord[7]=='a'&&scanRecord[8]=='b') {
+            //osi, tsc and tsd are transmitted in unsigned byte arrays. these carry values from -128 to 127. so add 128 to correct the values.
+            osi = byteToInt(scanRecord[9]);
+            tsc = byteToInt(scanRecord[10]);
+            tsd = byteToInt(scanRecord[11]);
             orientOsiView.setText(String.valueOf(osi));
             orientTscView.setText(String.valueOf(tsc));
             orientTsdView.setText(String.valueOf(tsd));
@@ -203,5 +202,13 @@ public class ScanResultAdapter extends BaseAdapter {
         }
 
         return lastSeenText;
+    }
+
+    public int byteToInt(byte byteValue) {
+        if((int)byteValue > 0) {
+            return (int)byteValue;
+        } else {
+            return (256 + (int)byteValue);
+        }
     }
 }

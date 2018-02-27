@@ -91,6 +91,7 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
                 Log.i(TAG, "Disconnected from GATT server.");
+                mBluetoothGatt.close();
                 broadcastUpdate(intentAction);
             }
         }
@@ -98,6 +99,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.i(TAG, "Services discovered successfully");
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
@@ -245,7 +247,7 @@ public class BluetoothLeService extends Service {
         }
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
-        mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
+        mBluetoothGatt = device.connectGatt(this, false, mGattCallback, BluetoothDevice.TRANSPORT_LE);
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
@@ -301,7 +303,7 @@ public class BluetoothLeService extends Service {
         /*check if orient service is available on the device*/
         BluetoothGattService mOrientService = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
         if(mOrientService == null){
-            Log.w(TAG, "Custom BLE Service not found");
+            Log.e(TAG, "Custom BLE Service not found when attempting to write to Orient Characteristic");
             return(false);
         }
 
@@ -310,26 +312,8 @@ public class BluetoothLeService extends Service {
         //First prepare and write OSI
         int nextOrientationIndex = iOSI + 1;
         int myTSC = iTSC;
-        int iNOSIMSB;
-        int iNOSILSB;
-        int iMYTSCMSB;
-        int iMYTSCLSB;
-        byte bNOSIMSB;
-        byte bNOSILSB;
-        byte bMYTSCMSB;
-        byte bMYTSCLSB;
-        iNOSIMSB = nextOrientationIndex / 256;
-        iNOSILSB = nextOrientationIndex % 256;
-        iMYTSCMSB = myTSC / 256;
-        iMYTSCLSB = myTSC % 256;
-        bNOSIMSB = (byte) (iNOSIMSB - 128);
-        bNOSILSB = (byte) (iNOSILSB - 128);
-        bMYTSCMSB = (byte) (iMYTSCMSB - 128);
-        bMYTSCLSB = (byte) (iMYTSCLSB - 128);
-        writeBuffer[0] = bNOSIMSB;
-        writeBuffer[1] = bNOSILSB;
-        writeBuffer[2] = bMYTSCMSB;
-        writeBuffer[3] = bMYTSCLSB;
+        writeBuffer[0] = (byte) nextOrientationIndex;
+        writeBuffer[1] = (byte) myTSC;
 
         /* OSI Characteristic UUID
         public static UUID OSI_CHARACTERISTIC = UUID.fromString("8f0048be-a048-40c8-9454-588e5d1e7423");*/
@@ -338,9 +322,10 @@ public class BluetoothLeService extends Service {
         BluetoothGattCharacteristic mWriteCharacteristic = mOrientService.getCharacteristic(OrientProfile.OSI_CHARACTERISTIC);
         mWriteCharacteristic.setValue(writeBuffer);
         if(mBluetoothGatt.writeCharacteristic(mWriteCharacteristic) == false){
-            Log.w(TAG, "Failed to write characteristic");
+            Log.e(TAG, "Failed to write characteristic");
             return(false);
         }
+        Log.i(TAG, "OrientProcedure succeeded. OSI and TSC written.");
         return(true);
     }
 
@@ -352,7 +337,7 @@ public class BluetoothLeService extends Service {
         /*check if orient service is available on the device*/
         BluetoothGattService mCustomService = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
         if(mCustomService == null){
-            Log.w(TAG, "Custom BLE Service not found");
+            Log.e(TAG, "Custom BLE Service not found");
             return(false);
         }
 
@@ -406,5 +391,13 @@ public class BluetoothLeService extends Service {
         if (mBluetoothGatt == null) return null;
 
         return mBluetoothGatt.getServices();
+    }
+
+    public int byteToInt(byte byteValue) {
+        if((int)byteValue > 0) {
+            return (int)byteValue;
+        } else {
+            return (256 + (int)byteValue);
+        }
     }
 }

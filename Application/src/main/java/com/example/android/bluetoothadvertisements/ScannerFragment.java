@@ -70,7 +70,7 @@ public class ScannerFragment extends ListFragment {
     /**
      * Stops scanning after 5 seconds.
      */
-    private static final long SCAN_PERIOD = 9500;
+    private static final long SCAN_PERIOD = 7000;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -156,7 +156,7 @@ public class ScannerFragment extends ListFragment {
         inflater.inflate(R.menu.scanner_menu, menu);
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
@@ -167,7 +167,7 @@ public class ScannerFragment extends ListFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     /**
      * Start scanning for BLE Advertisements (& set it up to stop after a set period of time).
@@ -278,9 +278,16 @@ public class ScannerFragment extends ListFragment {
             //If condition to check if the device is an orient device. The scan result should be added
             //to the list only if it is an orient device.
             byte[] scanRecord = result.getScanRecord().getBytes();
-            if((scanRecord[8] == 'a')&&(scanRecord[9] == 'b')&&(scanRecord[10] == 'c')) {
+
+            if((scanRecord[7] == 'a')&&(scanRecord[8] == 'b')) {
+                /*if (mScanning) {
+                    //mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    stopScanning();
+                    mScanning = false;
+                }*/
                 mAdapter.add(result);
                 mAdapter.notifyDataSetChanged();
+                //MainActivity.initializeOrientTransfer(result.getDevice().getAddress().toString());
             }
         }
 
@@ -306,10 +313,18 @@ public class ScannerFragment extends ListFragment {
             //mBluetoothAdapter.stopLeScan(mLeScanCallback);
             stopScanning();
             mScanning = false;
+            // Will start the ORIENT Transfer Process after this amount of time
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //MainActivity.initializeOrientTransfer(device.getAddress().toString());
+                }
+            }, 2000);
+
         }
+
         //startActivity(intent);
-        MainActivity.showMsg(device.getAddress().toString());
-        MainActivity.initializeOrientTransfer(device.getAddress().toString());
+
     }
 
     public void clearScanResult () {
