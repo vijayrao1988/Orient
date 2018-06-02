@@ -27,6 +27,8 @@ import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.BluetoothLeAdvertiser;
+import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -69,6 +71,7 @@ import static android.graphics.Color.GREEN;
 import static android.graphics.Color.RED;
 import static android.graphics.Color.green;
 import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.valueOf;
 
 /**
  * Setup display fragments and ensure the device supports Bluetooth.
@@ -83,6 +86,12 @@ public class MainActivity extends FragmentActivity {
     private BluetoothGattServer mBluetoothGattServer;
 
     private static BluetoothLeService mBluetoothLeService;
+
+    private BluetoothGattService serverOrientService;
+
+    private BluetoothGattCharacteristic serverOrientParameters;
+
+    private BluetoothGattCharacteristic serverSensorData;
 
     private boolean permissions_granted = false;
 
@@ -106,13 +115,22 @@ public class MainActivity extends FragmentActivity {
     private CheckBox viewCheckboxSink;
     private ProgressBar viewStatusProgressBar;
 
+    private TextView viewLabelConnectedAddress;
+    private TextView viewLabelConnectedOSI;
+    private TextView viewLabelConnectedTSC;
+    private TextView viewLabelConnectedTSD;
+    private TextView viewValueConnectedAddress;
+    private TextView viewValueConnectedOSI;
+    private TextView viewValueConnectedTSC;
+    private TextView viewValueConnectedTSD;
+
     private Set<BluetoothDevice> mRegisteredDevices = new HashSet<>();
 
-    private byte[] serverBuffer = new byte[2];
+    private byte[] serverBuffer = new byte[3];
 
-    public static int iTSC = 65535;
-    public static int iTSD = 65535;
-    public static int iOSI = 65535;
+    public static int iTSC = 120;
+    public static int iTSD = 60;
+    public static int iOSI = 255;
     public static int iStatus = 0;
     //0 = sensor, 1 = sink, 2 = relay
     public static int iSubstatus = 0;
@@ -127,18 +145,9 @@ public class MainActivity extends FragmentActivity {
     //                  iSubstatus = 1 : OrientAndCollect
     //                  iSubstatus = 2 : Forward
 
-    public static int iTSCMSB;
-    public static int iTSCLSB;
-    public static int iTSDMSB;
-    public static int iTSDLSB;
-    public static int iOSIMSB;
-    public static int iOSILSB;
-    public static byte bTSCMSB;
-    public static byte bTSCLSB;
-    public static byte bTSDMSB;
-    public static byte bTSDLSB;
-    public static byte bOSIMSB;
-    public static byte bOSILSB;
+    public static byte bTSC;
+    public static byte bTSD;
+    public static byte bOSI;
     public static byte bStatus;
 
     private int orientTasksProgress = 0;
@@ -148,8 +157,13 @@ public class MainActivity extends FragmentActivity {
 
     private ScanResultAdapter mAdapter;
 
-    private boolean mConnected = false;
+    public static boolean mConnected = false;
 
+    public static boolean sink = false;
+
+    static private ArrayList<ScanResult> scanResultsList;
+    static private int numberOfDevicesFound;
+    static private int scanResultIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +196,6 @@ public class MainActivity extends FragmentActivity {
         viewLabelTSD.setBackgroundColor(RED);
 
         orientTasksHandler = new Handler();
-        orientTasks.run(); //This call starts running ORIENT tasks continually with auto callbacks
 
 
         mAdapter = new ScanResultAdapter(this.getApplicationContext(),
@@ -277,34 +290,35 @@ public class MainActivity extends FragmentActivity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                mConnected = true;
-                showMsg("Connected to BLE Device");
-
+                Log.i("MainActivity","Connected to BLE Device.");
+                if(mBluetoothLeService.discoverServices())
+                    Log.i("MainActivity","discoverServices() called successfully.");
+                else
+                    Log.i("MainActivity","Failed to call discoverServices().");
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                mConnected = false;
+                Log.i("MainActivity","Disconnected from BLE Device");
+                mBluetoothLeService.close();
+                connectAndCommunicate();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Get all the supported services and characteristics on the user interface and write Orient Parameters
-                if(mBluetoothLeService.OrientProcedure() == false) {
-                    showMsg("OSI Write Failed");
-                } else {
-                    showMsg("OSI Write Succeeded");
-                    mBluetoothLeService.readOrientSensorData();
-                }
+                Log.i("MainActivity","Services discovered successfully");
+                if(mBluetoothLeService.readOrientParameters())
+                    Log.i("MainActivity","Call to read ORIENT parameters sent successfully.");
+                else
+                    Log.i("MainActivity","Call to read ORIENT parameters failed.");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                byte[] dataBuffer = new byte[3];
+                byte dataBuffer[];
                 dataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                showMsg("Data received : " + dataBuffer[0] + ":" + dataBuffer[1] + ":" + dataBuffer[2]);
+                Log.i("MainActivity","Data received : " + byteToInt(dataBuffer[0]) + "," + byteToInt(dataBuffer[1]) + ":" + byteToInt(dataBuffer[2]));
                 mBluetoothLeService.disconnect();
             } else if (BluetoothLeService.ACTION_CHARACTERISTIC_WRITTEN.equals(action)) {
-                if(action.toString().equalsIgnoreCase("01234567-0001-1000-8000-0123456789ab")) {
-                    showMsg("OSI written");
+                if(action.toString().equalsIgnoreCase(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.toString())) {
+                    Log.i("Server","ORIENT Parameters written.");
                 }
-                else if(action.toString().equalsIgnoreCase("01234567-0002-1000-8000-0123456789ab")) {
-                    showMsg("TSC written");
+                else if(action.toString().equalsIgnoreCase(OrientProfile.SENSOR_DATA_CHARACTERISTIC.toString())) {
+                    Log.i("Server","Sensor Data written");
                 }
-                else if(action.toString().equalsIgnoreCase("01234567-0003-1000-8000-0123456789ab")) {
-                    showMsg("TSD written");
-                }
+                mBluetoothLeService.readOrientSensorData();
             }
         }
     };
@@ -328,6 +342,7 @@ public class MainActivity extends FragmentActivity {
 
                         // Bluetooth Advertisements are not supported.
                         showErrorText(R.string.bt_ads_not_supported);
+                        setupFragments();
                     }
                 } else {
 
@@ -437,6 +452,14 @@ public class MainActivity extends FragmentActivity {
         //mBluetoothGattServer.addService(TimeProfile.createTimeService());
         mBluetoothGattServer.addService(OrientProfile.createOrientService());
 
+        serverOrientService = mBluetoothGattServer.getService(OrientProfile.ORIENT_MESH_SERVICE);
+        serverOrientParameters = serverOrientService.getCharacteristic(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC);
+        serverSensorData = serverOrientService.getCharacteristic(OrientProfile.SENSOR_DATA_CHARACTERISTIC);
+
+        orientTasks.run(); //This call starts running ORIENT tasks continually with auto callbacks
+
+
+
         // Initialize the local UI
         updateLocalUi();
 
@@ -461,10 +484,14 @@ public class MainActivity extends FragmentActivity {
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(Constants.TAG, "BluetoothDevice CONNECTED: " + device);
+                mConnected = true;
+                Log.i("State change","Connection opened. mConnected = true;");
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(Constants.TAG, "BluetoothDevice DISCONNECTED: " + device);
                 //Remove device from any active subscriptions
                 mRegisteredDevices.remove(device);
+                mConnected = false;
+                Log.i("State change","Connection closed. mConnected = false");
             }
         }
 
@@ -473,23 +500,15 @@ public class MainActivity extends FragmentActivity {
                                                 BluetoothGattCharacteristic characteristic) {
             long now = System.currentTimeMillis();
 
-            iOSIMSB = iOSI / 256;
-            iOSILSB = iOSI % 256;
-            bOSIMSB = (byte) (iOSIMSB - 128);
-            bOSILSB = (byte) (iOSILSB - 128);
-            iTSCMSB = iTSC / 256;
-            iTSCLSB = iTSC % 256;
-            bTSCMSB = (byte) (iTSCMSB - 128);
-            bTSCLSB = (byte) (iTSCLSB - 128);
-            iTSDMSB = iTSD / 256;
-            iTSDLSB = iTSD % 256;
-            bTSDMSB = (byte) (iTSDMSB - 128);
-            bTSDLSB = (byte) (iTSDLSB - 128);
+            bOSI = (byte) iOSI;
+            bTSC = (byte) iTSC;
+            bTSD = (byte) iTSD;
 
-            if (OrientProfile.OSI_CHARACTERISTIC.equals(characteristic.getUuid())) {
-                Log.i(Constants.TAG, "Read CurrentTime");
-                serverBuffer[0] = bOSIMSB;
-                serverBuffer[1] = bOSILSB;
+            if (OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.equals(characteristic.getUuid())) {
+                Log.i(Constants.TAG, "Received request to read ORIENT parameters.");
+                serverBuffer[0] = bOSI;
+                serverBuffer[1] = bTSC;
+                serverBuffer[2] = bTSD;
                 mBluetoothGattServer.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
@@ -522,16 +541,15 @@ public class MainActivity extends FragmentActivity {
                                                  boolean preparedWrite,
                                                  boolean responseNeeded,
                                                  int offset, byte[] data) {
-            if (characteristic.getUuid().equals(OrientProfile.OSI_CHARACTERISTIC)) {
+            if (characteristic.getUuid().equals(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC)) {
                 //set the OSI to the value received from the sink/relay. The sink/relay increments its own OSI value and sends it.
-                iOSI = ((data[0]+128) * 256) + data[1] + 128;
+                iOSI = byteToInt(data[0]);
                 //set the TSC  to the value received from the sink/relay. The sink/relay replicates its own TSC value onto the next node.
-                iTSC = ((data[0]+128) * 256) + data[1] + 128;
+                iTSC = byteToInt(data[1]);
                 //set the TSD to zero as a connection has just been established.
                 iTSD = 0;
                 iStatus = 2;    //Move status of the device to RELAY.
-                showMsg("OSI and TSC written " + Integer.toString(data[0]+128) + " "  + Integer.toString(data[1]+128));
-
+                showMsg("OSI and TSC written " + Integer.toString(data[0]) + " "  + Integer.toString(data[1]));
             }
 
             //update the screen with the updated values of OSI, TSC and TSD.
@@ -620,14 +638,41 @@ public class MainActivity extends FragmentActivity {
         {
             case 0:
                 viewDisplayStatus.setText("Sensor");
+                viewDisplayStatus.setBackgroundColor(RED);
+                viewDisplayOSI.setBackgroundColor(RED);
+                viewDisplayTSC.setBackgroundColor(RED);
+                viewDisplayTSD.setBackgroundColor(RED);
+                viewLabelStatus.setBackgroundColor(RED);
+                viewLabelOSI.setBackgroundColor(RED);
+                viewLabelTSC.setBackgroundColor(RED);
+                viewLabelTSD.setBackgroundColor(RED);
+                viewStatusProgressBar.setVisibility(View.INVISIBLE);
                 break;
 
             case 1:
                 viewDisplayStatus.setText("Sink");
+                viewDisplayStatus.setBackgroundColor(GREEN);
+                viewDisplayOSI.setBackgroundColor(GREEN);
+                viewDisplayTSC.setBackgroundColor(GREEN);
+                viewDisplayTSD.setBackgroundColor(GREEN);
+                viewLabelStatus.setBackgroundColor(GREEN);
+                viewLabelOSI.setBackgroundColor(GREEN);
+                viewLabelTSC.setBackgroundColor(GREEN);
+                viewLabelTSD.setBackgroundColor(GREEN);
+                viewStatusProgressBar.setVisibility(View.VISIBLE);
                 break;
 
             case 2:
                 viewDisplayStatus.setText("Relay");
+                viewDisplayStatus.setBackgroundColor(GREEN);
+                viewDisplayOSI.setBackgroundColor(GREEN);
+                viewDisplayTSC.setBackgroundColor(GREEN);
+                viewDisplayTSD.setBackgroundColor(GREEN);
+                viewLabelStatus.setBackgroundColor(GREEN);
+                viewLabelOSI.setBackgroundColor(GREEN);
+                viewLabelTSC.setBackgroundColor(GREEN);
+                viewLabelTSD.setBackgroundColor(GREEN);
+                viewStatusProgressBar.setVisibility(View.VISIBLE);
                 break;
 
             default:
@@ -648,37 +693,22 @@ public class MainActivity extends FragmentActivity {
             iTSC = 0;
             iTSD = 0;
             iStatus = 1;
+            sink = true;
 
-            viewDisplayStatus.setBackgroundColor(GREEN);
-            viewDisplayOSI.setBackgroundColor(GREEN);
-            viewDisplayTSC.setBackgroundColor(GREEN);
-            viewDisplayTSD.setBackgroundColor(GREEN);
-            viewLabelStatus.setBackgroundColor(GREEN);
-            viewLabelOSI.setBackgroundColor(GREEN);
-            viewLabelTSC.setBackgroundColor(GREEN);
-            viewLabelTSD.setBackgroundColor(GREEN);
-            viewStatusProgressBar.setVisibility(View.VISIBLE);
             updateLocalUi();
 
         }
         else {
             stopScanning();
 
-            iOSI = 65535;
-            iTSC = 65535;
-            iTSD = 65535;
+            iOSI = 255;
+            iTSC = 120;
+            iTSD = 60;
             iStatus = 0;
             orientTasksProgress = 0;
+            sink = false;
 
-            viewDisplayStatus.setBackgroundColor(RED);
-            viewDisplayOSI.setBackgroundColor(RED);
-            viewDisplayTSC.setBackgroundColor(RED);
-            viewDisplayTSD.setBackgroundColor(RED);
-            viewLabelStatus.setBackgroundColor(RED);
-            viewLabelOSI.setBackgroundColor(RED);
-            viewLabelTSC.setBackgroundColor(RED);
-            viewLabelTSD.setBackgroundColor(RED);
-            viewStatusProgressBar.setVisibility(View.INVISIBLE);
+
             updateLocalUi();
 
 
@@ -705,6 +735,9 @@ public class MainActivity extends FragmentActivity {
 
     Runnable orientTasks = new Runnable() {
         public void run() {
+            ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
+            byte parameters[] = {(byte) iOSI, (byte) iTSC, (byte) iTSD};
+
             orientTasksHandler.postDelayed(orientTasks, 1000);
             switch (iStatus) {
                 case 0: //sensor
@@ -712,30 +745,28 @@ public class MainActivity extends FragmentActivity {
                         iTSD++;
                         iTSC++;
                     }
+                    serverOrientParameters.setValue(parameters);
                     updateLocalUi();
                     break;
 
 
                 case 1: //sink
-                    ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
-                    showMsg("Devices Found: " + String.valueOf(mAdapter.getCount()));
                     switch (orientTasksProgress) {
                         case 0:
-                            showMsg("Scanning started");
-                            scannerFragment.clearScanResult();
-                            startScanning();
+                            //showMsg("Scanning");
+                            //scannerFragment.clearScanResult();
+                            //startScanning();
                             break;
 
-                        case 9:
+                        case 5:
                             //analyse list of ble devices
                             //connect with these devices
                             //write to the gatt server of these devices
-                            showMsg("Scanning stopped");
+                            //showMsg("Scanning stopped");
                             break;
 
                         case 10:
                             viewStatusProgressBar.setProgress(orientTasksProgress);
-                            orientTasksProgress = 0;
                             break;
 
                         default:
@@ -744,10 +775,46 @@ public class MainActivity extends FragmentActivity {
 
                     }
                     viewStatusProgressBar.setProgress(orientTasksProgress);
-                    orientTasksProgress++;
+                    if(orientTasksProgress < 10) {
+                        orientTasksProgress++;
+                    }
+                    else {
+                        orientTasksProgress = 0;
+                    }
                     break;
 
                 case 2: //relay
+                    switch (orientTasksProgress) {
+                        case 0:
+                            //showMsg("Scanning");
+                            //scannerFragment.clearScanResult();
+                            //startScanning();
+                            break;
+
+                        case 5:
+                            //analyse list of ble devices
+                            //connect with these devices
+                            //write to the gatt server of these devices
+                            //showMsg("Scanning stopped");
+                            break;
+
+                        case 10:
+                            viewStatusProgressBar.setProgress(orientTasksProgress);
+                            break;
+
+                        default:
+                            break;
+
+
+                    }
+                    viewStatusProgressBar.setProgress(orientTasksProgress);
+                    if(orientTasksProgress < 10) {
+                        orientTasksProgress++;
+                    }
+                    else {
+                        orientTasksProgress = 0;
+                    }
+
                     if(iTSC<60)
                     {
                         iTSC++;
@@ -756,7 +823,9 @@ public class MainActivity extends FragmentActivity {
                     {
                         iStatus = 0;
                         iTSD = 0;
+                        iOSI = 255;
                     }
+                    serverOrientParameters.setValue(parameters);
                     updateLocalUi();
                     break;
 
@@ -801,7 +870,40 @@ public class MainActivity extends FragmentActivity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_CHARACTERISTIC_WRITTEN);
         return intentFilter;
+    }
+
+
+    int byteToInt(byte bData) {
+        int iData;
+        if(bData < 0) {
+            iData = 256 + bData;
+        } else {
+            iData = bData;
+        }
+        return iData;
+    }
+
+    public static void postScanProcess(ScanResultAdapter mAdapter) {
+        scanResultsList = mAdapter.mArrayList;
+        numberOfDevicesFound = mAdapter.getCount();
+        scanResultIndex = 0;
+        Log.i("MainActivity","Found " + numberOfDevicesFound + "devices.");
+        if(numberOfDevicesFound > 0) {
+            connectAndCommunicate();
+        }
+    }
+
+    public static void connectAndCommunicate() {
+        if(scanResultIndex<numberOfDevicesFound) {
+            Log.i("MainActivity","Connecting to list item " + scanResultIndex);
+            mBluetoothLeService.connect(scanResultsList.get(scanResultIndex).getDevice().getAddress());
+            scanResultIndex++;
+        } else {
+            Log.i("MainActivity","Reached end of list of devices.");
+            scanResultIndex = 0;
+        }
     }
 
 }

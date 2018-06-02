@@ -32,6 +32,8 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import static com.example.android.bluetoothadvertisements.MainActivity.mConnected;
+
 /**
  * Allows user to start & stop Bluetooth LE Advertising of their device.
  */
@@ -159,8 +161,7 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
 
         if (on) {
             advertising = true;
-            advertisingPhase = 0;
-            advertisementRefresher.run(); //This call starts running advertisementRefresher continually with auto callbacks
+            startAdvertising();
         } else {
             advertising = false;
             stopAdvertising();
@@ -184,28 +185,5 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
         mSwitch.setChecked(false);
         advertising = false;
     }
-
-    Runnable advertisementRefresher = new Runnable() {
-        public void run() {
-            if(advertising) {
-                if (advertisingPhase == 0) {
-                    //this is the advertising on duration
-                    Context c = getActivity();
-                    c.startService(getServiceIntent(c));
-                    advertisingPhase = 1;
-                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 1000);
-                } else {
-                    //this is the advertising off duration
-                    Context c = getActivity();
-                    c.stopService(getServiceIntent(c));
-                    advertisingPhase = 0;
-                    advertisementRefreshHandler.postDelayed(advertisementRefresher, 9000);
-                }
-            }
-            else {
-                stopAdvertising();
-            }
-        }
-    };
 
 }

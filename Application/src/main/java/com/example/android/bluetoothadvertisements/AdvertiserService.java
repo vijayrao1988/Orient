@@ -18,21 +18,9 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.example.android.bluetoothadvertisements.MainActivity.bOSILSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.bOSIMSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.bTSCLSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.bTSCMSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.bTSDLSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.bTSDMSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.iOSI;
-import static com.example.android.bluetoothadvertisements.MainActivity.iOSILSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.iOSIMSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.iTSC;
-import static com.example.android.bluetoothadvertisements.MainActivity.iTSCLSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.iTSCMSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.iTSD;
-import static com.example.android.bluetoothadvertisements.MainActivity.iTSDLSB;
-import static com.example.android.bluetoothadvertisements.MainActivity.iTSDMSB;
+import static com.example.android.bluetoothadvertisements.MainActivity.bOSI;
+import static com.example.android.bluetoothadvertisements.MainActivity.bTSC;
+import static com.example.android.bluetoothadvertisements.MainActivity.bTSD;
 import static com.example.android.bluetoothadvertisements.MainActivity.iOSI;
 import static com.example.android.bluetoothadvertisements.MainActivity.iTSC;
 import static com.example.android.bluetoothadvertisements.MainActivity.iTSD;
@@ -216,28 +204,10 @@ public class AdvertiserService extends Service {
         dataBuilder.setIncludeDeviceName(false);
         dataBuilder.setIncludeTxPowerLevel(false);
 
-        orientParameters[0] = 10;
+        orientParameters[0] = 3;
         orientParameters[1] = 'a';
         orientParameters[2] = 'b';
         orientParameters[3] = 'c';
-        iOSIMSB = iOSI / 256;
-        iOSILSB = iOSI % 256;
-        bOSIMSB = (byte) (iOSIMSB - 128);
-        bOSILSB = (byte) (iOSILSB - 128);
-        orientParameters[4] = bOSIMSB;
-        orientParameters[5] = bOSILSB;
-        iTSCMSB = iTSC / 256;
-        iTSCLSB = iTSC % 256;
-        bTSCMSB = (byte) (iTSCMSB - 128);
-        bTSCLSB = (byte) (iTSCLSB - 128);
-        orientParameters[6] = bTSCMSB;
-        orientParameters[7] = bTSCLSB;
-        iTSDMSB = iTSD / 256;
-        iTSDLSB = iTSD % 256;
-        bTSDMSB = (byte) (iTSDMSB - 128);
-        bTSDLSB = (byte) (iTSDLSB - 128);
-        orientParameters[8] = bTSDMSB;
-        orientParameters[9] = bTSDLSB;
 
         /*String orientParametersString = "abc";
         orientParameters = new byte[orientParametersString.getBytes().length + 1];

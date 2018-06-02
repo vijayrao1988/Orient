@@ -58,6 +58,8 @@ import com.example.android.bluetoothadvertisements.ScanResultAdapter;
 import static android.content.Context.BIND_AUTO_CREATE;
 import static android.os.Build.VERSION.SDK;
 import static android.os.Build.VERSION.SDK_INT;
+import static com.example.android.bluetoothadvertisements.MainActivity.iOSI;
+import static com.example.android.bluetoothadvertisements.MainActivity.iTSC;
 
 
 /**
@@ -70,7 +72,7 @@ public class ScannerFragment extends ListFragment {
     /**
      * Stops scanning after 5 seconds.
      */
-    private static final long SCAN_PERIOD = 9500;
+    private static final long SCAN_PERIOD = 5000;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -80,7 +82,7 @@ public class ScannerFragment extends ListFragment {
 
     private ScanCallback mScanCallback;
 
-    private ScanResultAdapter mAdapter;
+    public ScanResultAdapter mAdapter;
 
     private Handler mHandler;
 
@@ -173,8 +175,9 @@ public class ScannerFragment extends ListFragment {
      * Start scanning for BLE Advertisements (& set it up to stop after a set period of time).
      */
     public void startScanning() {
+
         if (mScanCallback == null) {
-            Log.d(TAG, "Starting Scanning");
+            Log.d(TAG, "Scanning started.");
 
             mScanning = true;
 
@@ -221,6 +224,8 @@ public class ScannerFragment extends ListFragment {
 
             // Even if no new results, update 'last seen' times.
             mAdapter.notifyDataSetChanged();
+
+            MainActivity.postScanProcess(mAdapter);
 
             /*String toastText = getString(R.string.scan_stop_toast) + " "
                     + TimeUnit.SECONDS.convert(SCAN_PERIOD, TimeUnit.MILLISECONDS) + " "
@@ -278,6 +283,7 @@ public class ScannerFragment extends ListFragment {
             //If condition to check if the device is an orient device. The scan result should be added
             //to the list only if it is an orient device.
             byte[] scanRecord = result.getScanRecord().getBytes();
+            Log.i("Scanner","onScanResult" + result.getDevice().getAddress().toString() + " : " + scanRecord[8] + scanRecord[9] + scanRecord[10]);
             if((scanRecord[8] == 'a')&&(scanRecord[9] == 'b')&&(scanRecord[10] == 'c')) {
                 mAdapter.add(result);
                 mAdapter.notifyDataSetChanged();
@@ -315,6 +321,16 @@ public class ScannerFragment extends ListFragment {
     public void clearScanResult () {
         mAdapter.clear();
         mAdapter.notifyDataSetChanged();
+    }
+
+    int byteToInt(byte bData) {
+        int iData;
+        if(bData < 0) {
+            iData = 256 + bData;
+        } else {
+            iData = bData;
+        }
+        return iData;
     }
 
 }

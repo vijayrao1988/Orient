@@ -44,7 +44,7 @@ public class OrientProfile {
     public static UUID ORIENT_MESH_SERVICE = UUID.fromString("01234567-0000-1000-8000-0123456789ab");
 
     // OSI Characteristic UUID
-    public static UUID OSI_CHARACTERISTIC = UUID.fromString("01234567-0001-1000-8000-0123456789ab");
+    public static UUID ORIENT_PARAMETERS_CHARACTERISTIC = UUID.fromString("01234567-0001-1000-8000-0123456789ab");
 
     // Sensor Data Characteristic UUID
     public static UUID SENSOR_DATA_CHARACTERISTIC = UUID.fromString("01234567-0002-1000-8000-0123456789ab");
@@ -75,7 +75,7 @@ public class OrientProfile {
                 BluetoothGattService.SERVICE_TYPE_PRIMARY);
 
         // Orientation Stream Index characteristic
-        BluetoothGattCharacteristic osiValue = new BluetoothGattCharacteristic(OSI_CHARACTERISTIC,
+        BluetoothGattCharacteristic orientParameters = new BluetoothGattCharacteristic(ORIENT_PARAMETERS_CHARACTERISTIC,
                 //Read-only characteristic, supports notifications
                 BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
@@ -83,26 +83,11 @@ public class OrientProfile {
         // Time Since Contact characteristic
         BluetoothGattCharacteristic sensorData = new BluetoothGattCharacteristic(SENSOR_DATA_CHARACTERISTIC,
                 //Read-only characteristic
-                BluetoothGattCharacteristic.PROPERTY_READ,
-                BluetoothGattCharacteristic.PERMISSION_READ);
-
-
-        /* Time Since Contact characteristic
-        BluetoothGattCharacteristic tscValue = new BluetoothGattCharacteristic(TSC_CHARACTERISTIC,
-                //Read-only characteristic
                 BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
 
-        // TSD Characteristic Information characteristic
-        BluetoothGattCharacteristic tsdValue = new BluetoothGattCharacteristic(TSD_CHARACTERISTIC,
-                //Read-only characteristic
-                BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_WRITE,
-                BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);*/
-
-
-        service.addCharacteristic(osiValue);
+        service.addCharacteristic(orientParameters);
         service.addCharacteristic(sensorData);
-        //service.addCharacteristic(tsdValue);
 
         return service;
     }

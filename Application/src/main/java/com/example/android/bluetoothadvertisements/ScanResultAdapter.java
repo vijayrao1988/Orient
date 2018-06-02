@@ -41,7 +41,7 @@ import static android.R.attr.name;
  */
 public class ScanResultAdapter extends BaseAdapter {
 
-    static private ArrayList<ScanResult> mArrayList;
+    static public ArrayList<ScanResult> mArrayList;
 
     private Context mContext;
 
@@ -109,16 +109,16 @@ public class ScanResultAdapter extends BaseAdapter {
         deviceAddressView.setText(scanResult.getDevice().getAddress());
         //lastSeenView.setText(getTimeSinceString(mContext, scanResult.getTimestampNanos()));
 
-        int osi = 65535;
-        int tsc = 65535;
-        int tsd = 65535;
+        int osi = 255;
+        int tsc = 255;
+        int tsd = 255;
         if(scanRecord[8]=='a'&&scanRecord[9]=='b'&&scanRecord[10]=='c') {
             int manufacturerDataLength = scanRecord[7];
             //osi, tsc and tsd are transmitted in unsigned byte arrays. these carry values from -128 to 127. so add 128 to correct the values.
 
-            osi = ((scanRecord[11] + 128) * 256) + scanRecord[12] + 128;
-            tsc = ((scanRecord[13] + 128) * 256) + scanRecord[14] + 128;
-            tsd = ((scanRecord[15] + 128) * 256) + scanRecord[16] + 128;
+            osi = byteToInt(scanRecord[11]);
+            tsc = byteToInt(scanRecord[12]);
+            tsd = byteToInt(scanRecord[13]);
             orientOsiView.setText(String.valueOf(osi));
             orientTscView.setText(String.valueOf(tsc));
             orientTsdView.setText(String.valueOf(tsd));
@@ -204,4 +204,15 @@ public class ScanResultAdapter extends BaseAdapter {
 
         return lastSeenText;
     }
+
+    int byteToInt(byte bData) {
+        int iData;
+        if(bData < 0) {
+            iData = 256 + bData;
+        } else {
+            iData = bData;
+        }
+        return iData;
+    }
+
 }

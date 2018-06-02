@@ -38,6 +38,8 @@ import java.util.UUID;
 
 import static com.example.android.bluetoothadvertisements.MainActivity.iOSI;
 import static com.example.android.bluetoothadvertisements.MainActivity.iTSC;
+import static com.example.android.bluetoothadvertisements.MainActivity.showMsg;
+import static java.lang.Boolean.TRUE;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
@@ -51,6 +53,7 @@ public class BluetoothLeService extends Service {
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
     private int mConnectionState = STATE_DISCONNECTED;
+    private BluetoothGattService mBluetoothGattService;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -82,15 +85,11 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
                 broadcastUpdate(intentAction);
-                Log.i(TAG, "Connected to GATT server.");
-                // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery:" +
-                        mBluetoothGatt.discoverServices());
+
 
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
-                Log.i(TAG, "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
             }
         }
@@ -122,6 +121,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             broadcastUpdate(ACTION_CHARACTERISTIC_WRITTEN, characteristic);
+            Log.i("BLEService","Characteristic written.");
         }
     };
 
@@ -150,6 +150,10 @@ public class BluetoothLeService extends Service {
             final int heartRate = characteristic.getIntValue(format, 1);
             Log.d(TAG, String.format("Received heart rate: %d", heartRate));
             intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
+        } else if (OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.equals(characteristic.getUuid())) {
+            Log.i("BleService","Received ORIENT parameters.");
+            final byte[] data = characteristic.getValue();
+            intent.putExtra(EXTRA_DATA, data);
         } else {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
@@ -222,7 +226,11 @@ public class BluetoothLeService extends Service {
      */
     public boolean connect(final String address) {
         if (mBluetoothAdapter == null || address == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
+            if(mBluetoothAdapter == null)
+                Log.w(TAG, "BluetoothAdapter not initialized.");
+            else
+                Log.w(TAG, "Unspecified address.");
+
             return false;
         }
 
@@ -264,6 +272,7 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.disconnect();
+        Log.i("BLEService","Disconnect called");
     }
 
     /**
@@ -276,6 +285,7 @@ public class BluetoothLeService extends Service {
         }
         mBluetoothGatt.close();
         mBluetoothGatt = null;
+        Log.i("BLEService","Close called");
     }
 
     /**
@@ -309,33 +319,17 @@ public class BluetoothLeService extends Service {
 
         //First prepare and write OSI
         int nextOrientationIndex = iOSI + 1;
-        int myTSC = iTSC;
-        int iNOSIMSB;
-        int iNOSILSB;
-        int iMYTSCMSB;
-        int iMYTSCLSB;
-        byte bNOSIMSB;
-        byte bNOSILSB;
-        byte bMYTSCMSB;
-        byte bMYTSCLSB;
-        iNOSIMSB = nextOrientationIndex / 256;
-        iNOSILSB = nextOrientationIndex % 256;
-        iMYTSCMSB = myTSC / 256;
-        iMYTSCLSB = myTSC % 256;
-        bNOSIMSB = (byte) (iNOSIMSB - 128);
-        bNOSILSB = (byte) (iNOSILSB - 128);
-        bMYTSCMSB = (byte) (iMYTSCMSB - 128);
-        bMYTSCLSB = (byte) (iMYTSCLSB - 128);
-        writeBuffer[0] = bNOSIMSB;
-        writeBuffer[1] = bNOSILSB;
-        writeBuffer[2] = bMYTSCMSB;
-        writeBuffer[3] = bMYTSCLSB;
+
+        byte bNOSI = (byte) nextOrientationIndex;
+        byte bMyTSC = (byte) iTSC;
+        writeBuffer[0] = bNOSI;
+        writeBuffer[1] = bMyTSC;
 
         /* OSI Characteristic UUID
         public static UUID OSI_CHARACTERISTIC = UUID.fromString("8f0048be-a048-40c8-9454-588e5d1e7423");*/
 
         /*get the read characteristic from the service*/
-        BluetoothGattCharacteristic mWriteCharacteristic = mOrientService.getCharacteristic(OrientProfile.OSI_CHARACTERISTIC);
+        BluetoothGattCharacteristic mWriteCharacteristic = mOrientService.getCharacteristic(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC);
         mWriteCharacteristic.setValue(writeBuffer);
         if(mBluetoothGatt.writeCharacteristic(mWriteCharacteristic) == false){
             Log.w(TAG, "Failed to write characteristic");
@@ -369,8 +363,9 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "Failed to read characteristic");
             return(false);
         }
-        Log.w(TAG, "Read characteristic");
+        Log.w(TAG, "readCharacteristic called successfully.");
         return(true);
+
     }
 
     /**
@@ -407,4 +402,28 @@ public class BluetoothLeService extends Service {
 
         return mBluetoothGatt.getServices();
     }
+
+    public boolean readOrientParameters() {
+        if (mBluetoothGatt == null) return false;
+
+        /*check if orient service is available on the device*/
+        mBluetoothGattService  = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
+
+        if(mBluetoothGattService == null){
+            Log.w(TAG, "ORIENT BLE Service not found on the remote device.");
+            return(false);
+        }
+
+        mBluetoothGatt.readCharacteristic(mBluetoothGattService.getCharacteristic(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC));
+
+        return true;
+    }
+
+    public boolean discoverServices () {
+        if (mBluetoothGatt == null) return false;
+
+        if(mBluetoothGatt.discoverServices()) return true;
+        else return false;
+    }
+
 }
