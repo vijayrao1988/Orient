@@ -37,7 +37,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
@@ -60,10 +62,14 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -72,6 +78,7 @@ import static android.graphics.Color.RED;
 import static android.graphics.Color.green;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Boolean.valueOf;
+import static java.lang.System.currentTimeMillis;
 
 /**
  * Setup display fragments and ensure the device supports Bluetooth.
@@ -114,6 +121,7 @@ public class MainActivity extends FragmentActivity {
     private TextView viewLabelStatus;
     private CheckBox viewCheckboxSink;
     private ProgressBar viewStatusProgressBar;
+    private TextView viewDisplayNodeId;
 
     private TextView viewLabelConnectedAddress;
     private TextView viewLabelConnectedOSI;
@@ -165,6 +173,21 @@ public class MainActivity extends FragmentActivity {
     static private int numberOfDevicesFound;
     static private int scanResultIndex;
 
+    static public ArrayList<SensorData> mSensorDataList = new ArrayList<SensorData>();
+
+    static private int sensorDataRate = 10; //ONCE IN THIS MANY SECONDS
+    static private int sensorDataTimer = 0; //Incremented every second using runnable orientTasks
+
+    Random rand = new Random();
+    private int mNodeId = rand.nextInt(100);
+
+    private File file;
+    private String fileName;
+    private String fileContents;
+    private FileOutputStream outputStream;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +205,8 @@ public class MainActivity extends FragmentActivity {
         viewLabelTSD = (TextView) findViewById(R.id.labelTSD);
         viewLabelStatus = (TextView) findViewById(R.id.labelStatus);
 
+        viewDisplayNodeId = (TextView) findViewById(R.id.viewNodeId);
+
         viewCheckboxSink = (CheckBox) findViewById(R.id.checkboxSink);
 
         viewStatusProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -194,6 +219,8 @@ public class MainActivity extends FragmentActivity {
         viewLabelOSI.setBackgroundColor(RED);
         viewLabelTSC.setBackgroundColor(RED);
         viewLabelTSD.setBackgroundColor(RED);
+
+        viewDisplayNodeId.setText("Node ID: " + String.valueOf(mNodeId));
 
         orientTasksHandler = new Handler();
 
@@ -498,7 +525,7 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
                                                 BluetoothGattCharacteristic characteristic) {
-            long now = System.currentTimeMillis();
+            long now = currentTimeMillis();
 
             bOSI = (byte) iOSI;
             bTSC = (byte) iTSC;
@@ -695,6 +722,30 @@ public class MainActivity extends FragmentActivity {
             iStatus = 1;
             sink = true;
 
+            if(isExternalStorageWritable()) {
+                Log.i("MainActivity","External Storage Writable.");
+            } else {
+                Log.i("MainActivity","External Storage Not Writable.");
+            }
+
+            fileName = String.valueOf(((int)(currentTimeMillis()/1000)));
+            fileName = fileName + ".txt";
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileName);
+            Log.i("MainActivity","Sink File Name : " + fileName);
+
+            try {
+                file.createNewFile();
+
+                outputStream = new FileOutputStream (new File(file.getAbsoluteFile().toString()), true);
+                fileContents = "NodeID : UnixTime(Epoch) : Data";
+                outputStream.write(fileContents.getBytes());
+                Log.i("MainActivity","Writing to file : " + fileContents);
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.i("MainActivity","Error in writing to file.");
+            }
+
             updateLocalUi();
 
         }
@@ -741,6 +792,18 @@ public class MainActivity extends FragmentActivity {
             orientTasksHandler.postDelayed(orientTasks, 1000);
             switch (iStatus) {
                 case 0: //sensor
+                    sensorDataTimer++;
+                    if(sensorDataTimer >= sensorDataRate) {
+                        sensorDataTimer = 0;
+                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000));
+
+                        mSensorDataList.add(sd);
+                        Log.i("MainActivity","Sensor Data Length = " + getSensorDataCount());
+                        int i;
+                        for(i=0;i<getSensorDataCount();i++) {
+                            Log.i("MainActivity", mSensorDataList.get(i).nodeId + " : " + mSensorDataList.get(i).timeStamp);
+                        }
+                    }
                     if(iTSD<60) {
                         iTSD++;
                         iTSC++;
@@ -904,6 +967,38 @@ public class MainActivity extends FragmentActivity {
             Log.i("MainActivity","Reached end of list of devices.");
             scanResultIndex = 0;
         }
+    }
+
+    public int getSensorDataCount() {
+        return mSensorDataList.size();
+    }
+
+    public SensorData getItem (int position) {
+        return mSensorDataList.get(position);
+    }
+
+    /**
+     * Clear out the sensor data buffer.
+     */
+    public void clear() {
+        mSensorDataList.clear();
+    }
+
+    /**
+     * Add a SensorData item to the buffer with current system time as timestamp
+     */
+    public void add(SensorData sensorData) {
+         mSensorDataList.add(sensorData);
+    }
+
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
 }

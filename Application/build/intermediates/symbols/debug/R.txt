@@ -683,8 +683,9 @@ int id top 0x7f070083
 int id topPanel 0x7f070084
 int id up 0x7f070085
 int id useLogo 0x7f070086
-int id withText 0x7f070087
-int id wrap_content 0x7f070088
+int id viewNodeId 0x7f070087
+int id withText 0x7f070088
+int id wrap_content 0x7f070089
 int integer abc_config_activityDefaultDur 0x7f080000
 int integer abc_config_activityShortDur 0x7f080001
 int integer cancel_button_image_alpha 0x7f080002

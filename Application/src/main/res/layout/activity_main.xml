@@ -54,6 +54,13 @@
                 android:progress="0"
                 android:visibility="invisible" />
 
+            <TextView
+                android:id="@+id/viewNodeId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Node ID:" />
+
         </LinearLayout>
 
         <TextView
@@ -65,6 +72,7 @@
             android:gravity="center"
             android:textSize="16dp"
             tools:text="Console" />
+
     </LinearLayout>
 
     <LinearLayout
