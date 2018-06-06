@@ -67,6 +67,10 @@ public class BluetoothLeService extends Service {
             "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE =
             "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+    public final static String ACTION_ORIENT_DATA_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_ORIENT_DATA_AVAILABLE";
+    public final static String ACTION_SENSOR_DATA_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_SENSOR_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
     public final static String ACTION_CHARACTERISTIC_WRITTEN =
@@ -108,7 +112,15 @@ public class BluetoothLeService extends Service {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                if (OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.equals(characteristic.getUuid())) {
+                    Log.i("BLEService","ORIENT parameters characteristic read.");
+                    broadcastUpdate(ACTION_ORIENT_DATA_AVAILABLE, characteristic);
+                } else if (OrientProfile.SENSOR_DATA_CHARACTERISTIC.equals(characteristic.getUuid())) {
+                    Log.i("BLEService","Sensor data characteristic read.");
+                    broadcastUpdate(ACTION_SENSOR_DATA_AVAILABLE, characteristic);
+                } else {
+                    broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                }
             }
         }
 
@@ -133,25 +145,13 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action,
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
-
-        // This is special handling for the Heart Rate Measurement profile.  Data parsing is
-        // carried out as per profile specifications:
-        // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
-            int flag = characteristic.getProperties();
-            int format = -1;
-            if ((flag & 0x01) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16;
-                Log.d(TAG, "Heart rate format UINT16.");
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                Log.d(TAG, "Heart rate format UINT8.");
-            }
-            final int heartRate = characteristic.getIntValue(format, 1);
-            Log.d(TAG, String.format("Received heart rate: %d", heartRate));
-            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
-        } else if (OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.equals(characteristic.getUuid())) {
+        Log.i("BleService","broadcastUpdate for " + characteristic.getUuid().toString());
+        if (OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.equals(characteristic.getUuid())) {
             Log.i("BleService","Received ORIENT parameters.");
+            final byte[] data = characteristic.getValue();
+            intent.putExtra(EXTRA_DATA, data);
+        } else if (OrientProfile.SENSOR_DATA_CHARACTERISTIC.equals(characteristic.getUuid())) {
+            Log.i("BleService","Received sensor data.");
             final byte[] data = characteristic.getValue();
             intent.putExtra(EXTRA_DATA, data);
         } else {
@@ -164,6 +164,7 @@ public class BluetoothLeService extends Service {
                 intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
             }
         }
+
         sendBroadcast(intent);
     }
 
@@ -406,9 +407,10 @@ public class BluetoothLeService extends Service {
     public boolean readOrientParameters() {
         if (mBluetoothGatt == null) return false;
 
-        /*check if orient service is available on the device*/
+        /*get  services available on the device*/
         mBluetoothGattService  = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
 
+        //if orient services are avilable on the device, read orient parameters
         if(mBluetoothGattService == null){
             Log.w(TAG, "ORIENT BLE Service not found on the remote device.");
             return(false);
@@ -417,6 +419,51 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt.readCharacteristic(mBluetoothGattService.getCharacteristic(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC));
 
         return true;
+    }
+
+    public boolean readSensorData() {
+        if (mBluetoothGatt == null) return false;
+
+        //if orient services are available on the device, read sensor data
+        if(mBluetoothGattService == null){
+            Log.w(TAG, "ORIENT BLE Service not found on the remote device.");
+            return(false);
+        }
+
+        mBluetoothGatt.readCharacteristic(mBluetoothGattService.getCharacteristic(OrientProfile.SENSOR_DATA_CHARACTERISTIC));
+
+        return true;
+    }
+
+    public boolean writeOrientParameters(int OSI, int TSC, int TSD) {
+        if (mBluetoothGatt == null) return false;
+
+        /*get  services available on the device*/
+        mBluetoothGattService  = mBluetoothGatt.getService(OrientProfile.ORIENT_MESH_SERVICE);
+
+        //if orient services are avilable on the device, read orient parameters
+        if(mBluetoothGattService == null){
+            Log.w(TAG, "ORIENT BLE Service not found on the remote device.");
+            return(false);
+        }
+
+        byte[] writeBuffer = new byte[4];
+
+        //First prepare and write OSI
+        int nextOrientationIndex = OSI + 1;
+
+        byte bNOSI = (byte) nextOrientationIndex;
+        byte bMyTSC = (byte) TSC;
+        writeBuffer[0] = bNOSI;
+        writeBuffer[1] = bMyTSC;
+
+        BluetoothGattCharacteristic mWriteCharacteristic = mBluetoothGattService.getCharacteristic(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC);
+        mWriteCharacteristic.setValue(writeBuffer);
+        if(mBluetoothGatt.writeCharacteristic(mWriteCharacteristic) == false){
+            Log.w(TAG, "Failed to write characteristic");
+            return(false);
+        }
+        return(true);
     }
 
     public boolean discoverServices () {

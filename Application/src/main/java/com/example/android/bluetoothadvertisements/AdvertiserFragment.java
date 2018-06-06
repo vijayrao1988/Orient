@@ -43,9 +43,10 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
      * Lets user toggle BLE Advertising.
      */
     private Switch mSwitch;
-    private boolean advertising = false;
+    public static boolean advertising = false;
     private Handler advertisementRefreshHandler;
     private int advertisingPhase = 0;
+
 
     /**
      * Listens for notifications that the {@code AdvertiserService} has failed to start advertising.

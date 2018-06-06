@@ -73,6 +73,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import static android.graphics.Color.BLUE;
 import static android.graphics.Color.GREEN;
 import static android.graphics.Color.RED;
 import static android.graphics.Color.green;
@@ -131,6 +132,8 @@ public class MainActivity extends FragmentActivity {
     private TextView viewValueConnectedOSI;
     private TextView viewValueConnectedTSC;
     private TextView viewValueConnectedTSD;
+    private Switch viewAdvertiseSwitch;
+
 
     private Set<BluetoothDevice> mRegisteredDevices = new HashSet<>();
 
@@ -186,6 +189,10 @@ public class MainActivity extends FragmentActivity {
     private String fileContents;
     private FileOutputStream outputStream;
 
+    private static boolean isSink = false;
+
+    private boolean scanningStartFlag = false;
+
 
 
     @Override
@@ -219,6 +226,8 @@ public class MainActivity extends FragmentActivity {
         viewLabelOSI.setBackgroundColor(RED);
         viewLabelTSC.setBackgroundColor(RED);
         viewLabelTSD.setBackgroundColor(RED);
+
+
 
         viewDisplayNodeId.setText("Node ID: " + String.valueOf(mNodeId));
 
@@ -316,7 +325,9 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            Log.i("MainActivity",action);
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                //Callback1
                 Log.i("MainActivity","Connected to BLE Device.");
                 if(mBluetoothLeService.discoverServices())
                     Log.i("MainActivity","discoverServices() called successfully.");
@@ -333,6 +344,37 @@ public class MainActivity extends FragmentActivity {
                     Log.i("MainActivity","Call to read ORIENT parameters sent successfully.");
                 else
                     Log.i("MainActivity","Call to read ORIENT parameters failed.");
+            } else if (BluetoothLeService.ACTION_ORIENT_DATA_AVAILABLE.equals(action)) {
+                Log.i("MainActivity","Responding to ORIENT parameters.");
+                byte dataBuffer[];
+                dataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+                int iOSIremote = byteToInt(dataBuffer[0]);
+                int iTSCremote = byteToInt(dataBuffer[1]);
+                int iTSDremote = byteToInt(dataBuffer[2]);
+                Log.i("MainActivity","OSI = " + iOSIremote + ", TSC = " + iTSCremote + ", TSD = " + iTSDremote);
+                if ((iOSIremote > iOSI) || ((iOSIremote==iOSI) && (iTSDremote > iTSC)) ) {
+                    if(mBluetoothLeService.readSensorData())
+                        Log.i("MainActivity","Call to read sensor data sent successfully.");
+                    else
+                        Log.i("MainActivity","Call to read sensor data failed.");
+                } else {
+                    Log.i("MainActivity","OSI found to be unsuitable. Disconnecting from remote device.");
+                    mBluetoothLeService.disconnect();
+                }
+            } else if (BluetoothLeService.ACTION_SENSOR_DATA_AVAILABLE.equals(action)) {
+                Log.i("MainActivity","Responding to sensor data.");
+                //byte dataBuffer[];
+                //dataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+
+                //Log.i("MainActivity","Sensor Data = " + byteToInt(dataBuffer[0]) + "," + byteToInt(dataBuffer[1]) + "," + byteToInt(dataBuffer[2]) + "," + byteToInt(dataBuffer[3]) + "," + byteToInt(dataBuffer[4]));
+
+                if(mBluetoothLeService.writeOrientParameters(iOSI, iTSC, 0))
+                    Log.i("MainActivity","Call to write ORIENT parameters sent successfully.");
+                else {
+                    Log.i("MainActivity","Call to write ORIENT parameters failed.");
+                    mBluetoothLeService.disconnect();
+                }
+
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 byte dataBuffer[];
                 dataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
@@ -341,11 +383,9 @@ public class MainActivity extends FragmentActivity {
             } else if (BluetoothLeService.ACTION_CHARACTERISTIC_WRITTEN.equals(action)) {
                 if(action.toString().equalsIgnoreCase(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.toString())) {
                     Log.i("Server","ORIENT Parameters written.");
+
                 }
-                else if(action.toString().equalsIgnoreCase(OrientProfile.SENSOR_DATA_CHARACTERISTIC.toString())) {
-                    Log.i("Server","Sensor Data written");
-                }
-                mBluetoothLeService.readOrientSensorData();
+                mBluetoothLeService.disconnect();
             }
         }
     };
@@ -568,6 +608,7 @@ public class MainActivity extends FragmentActivity {
                                                  boolean preparedWrite,
                                                  boolean responseNeeded,
                                                  int offset, byte[] data) {
+            Log.i("MainActivity","Characteristic write request received " + characteristic.getUuid().toString());
             if (characteristic.getUuid().equals(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC)) {
                 //set the OSI to the value received from the sink/relay. The sink/relay increments its own OSI value and sends it.
                 iOSI = byteToInt(data[0]);
@@ -576,14 +617,9 @@ public class MainActivity extends FragmentActivity {
                 //set the TSD to zero as a connection has just been established.
                 iTSD = 0;
                 iStatus = 2;    //Move status of the device to RELAY.
-                showMsg("OSI and TSC written " + Integer.toString(data[0]) + " "  + Integer.toString(data[1]));
+                Log.i("MainActivity","OSI and TSC written " + Integer.toString(data[0]) + " "  + Integer.toString(data[1]));
+                scanningStartFlag = true;
             }
-
-            //update the screen with the updated values of OSI, TSC and TSD.
-            updateLocalUi();
-
-            //start advertising the updated values of OSI, TSC and TSD.
-
 
             mBluetoothGattServer.sendResponse(device,
                     requestId,
@@ -591,7 +627,6 @@ public class MainActivity extends FragmentActivity {
                     0,
                     data
             );
-
         }
 
         @Override
@@ -747,10 +782,10 @@ public class MainActivity extends FragmentActivity {
             }
 
             updateLocalUi();
+            startScanning();
 
         }
         else {
-            stopScanning();
 
             iOSI = 255;
             iTSC = 120;
@@ -788,16 +823,39 @@ public class MainActivity extends FragmentActivity {
         public void run() {
             ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
             byte parameters[] = {(byte) iOSI, (byte) iTSC, (byte) iTSD};
+            byte sensorData[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+            if (scanningStartFlag) {
+                startScanning();
+                scanningStartFlag = false;
+            }
 
             orientTasksHandler.postDelayed(orientTasks, 1000);
             switch (iStatus) {
                 case 0: //sensor
                     sensorDataTimer++;
-                    if(sensorDataTimer >= sensorDataRate) {
+                    if((AdvertiserFragment.advertising)&&(sensorDataTimer >= sensorDataRate)) {
                         sensorDataTimer = 0;
+
                         SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000));
 
+                        //NodeID: Byte0 of the sensor data characteristic
+                        sensorData[0] = (byte) sd.nodeId;
+                        //TimeStamp : Byte1 - Byte4 of the sensor data characteristic
+                        sensorData[1] = (byte) (sd.timeStamp / 16777216);
+                        sensorData[2] = (byte) ((sd.timeStamp % 16777216) / 65536);
+                        sensorData[3] = (byte) ((sd.timeStamp % 65536) / 256);
+                        sensorData[4] = (byte) (sd.timeStamp % 256);
+                        //SensorData: Byte5 - Byte9 of the sensor data characteristic
+                        sensorData[5] = (byte) rand.nextInt(100);
+                        sensorData[6] = (byte) rand.nextInt(100);
+                        sensorData[7] = (byte) rand.nextInt(100);
+                        sensorData[8] = (byte) rand.nextInt(100);
+                        sensorData[9] = (byte) rand.nextInt(100);
+
                         mSensorDataList.add(sd);
+                        serverSensorData.setValue(sensorData);
+
                         Log.i("MainActivity","Sensor Data Length = " + getSensorDataCount());
                         int i;
                         for(i=0;i<getSensorDataCount();i++) {
@@ -847,6 +905,34 @@ public class MainActivity extends FragmentActivity {
                     break;
 
                 case 2: //relay
+                    sensorDataTimer++;
+                    if((AdvertiserFragment.advertising)&&(sensorDataTimer >= sensorDataRate)) {
+                        sensorDataTimer = 0;
+                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000));
+
+                        //NodeID: Byte0 of the sensor data characteristic
+                        sensorData[0] = (byte) sd.nodeId;
+                        //TimeStamp : Byte1 - Byte4 of the sensor data characteristic
+                        sensorData[1] = (byte) (sd.timeStamp / 16777216);
+                        sensorData[2] = (byte) ((sd.timeStamp % 16777216) / 65536);
+                        sensorData[3] = (byte) ((sd.timeStamp % 65536) / 256);
+                        sensorData[4] = (byte) (sd.timeStamp % 256);
+                        //SensorData: Byte5 - Byte9 of the sensor data characteristic
+                        sensorData[5] = (byte) rand.nextInt(100);
+                        sensorData[6] = (byte) rand.nextInt(100);
+                        sensorData[7] = (byte) rand.nextInt(100);
+                        sensorData[8] = (byte) rand.nextInt(100);
+                        sensorData[9] = (byte) rand.nextInt(100);
+
+                        mSensorDataList.add(sd);
+                        serverSensorData.setValue(sensorData);
+
+                        Log.i("MainActivity","Sensor Data Length = " + getSensorDataCount());
+                        int i;
+                        for(i=0;i<getSensorDataCount();i++) {
+                            Log.i("MainActivity", mSensorDataList.get(i).nodeId + " : " + mSensorDataList.get(i).timeStamp);
+                        }
+                    }
                     switch (orientTasksProgress) {
                         case 0:
                             //showMsg("Scanning");
@@ -934,6 +1020,8 @@ public class MainActivity extends FragmentActivity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         intentFilter.addAction(BluetoothLeService.ACTION_CHARACTERISTIC_WRITTEN);
+        intentFilter.addAction(BluetoothLeService.ACTION_ORIENT_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_SENSOR_DATA_AVAILABLE);
         return intentFilter;
     }
 
@@ -948,17 +1036,17 @@ public class MainActivity extends FragmentActivity {
         return iData;
     }
 
-    public static void postScanProcess(ScanResultAdapter mAdapter) {
+    public void postScanProcess(ScanResultAdapter mAdapter) {
         scanResultsList = mAdapter.mArrayList;
         numberOfDevicesFound = mAdapter.getCount();
         scanResultIndex = 0;
-        Log.i("MainActivity","Found " + numberOfDevicesFound + "devices.");
+        Log.i("MainActivity","Found " + numberOfDevicesFound + " devices.");
         if(numberOfDevicesFound > 0) {
             connectAndCommunicate();
         }
     }
 
-    public static void connectAndCommunicate() {
+    public void connectAndCommunicate() {
         if(scanResultIndex<numberOfDevicesFound) {
             Log.i("MainActivity","Connecting to list item " + scanResultIndex);
             mBluetoothLeService.connect(scanResultsList.get(scanResultIndex).getDevice().getAddress());
@@ -966,6 +1054,10 @@ public class MainActivity extends FragmentActivity {
         } else {
             Log.i("MainActivity","Reached end of list of devices.");
             scanResultIndex = 0;
+            if(iStatus > 0) {//iStatus = 0 for sensor. iStatus = 1 for sink. iStatus = 2 for relay.
+                startScanning();
+                Log.i("MainActivity","Scanning started again.");
+            }
         }
     }
 

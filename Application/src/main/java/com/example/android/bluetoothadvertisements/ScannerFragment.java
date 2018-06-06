@@ -19,6 +19,7 @@ package com.example.android.bluetoothadvertisements;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -67,12 +68,12 @@ import static com.example.android.bluetoothadvertisements.MainActivity.iTSC;
  */
 public class ScannerFragment extends ListFragment {
 
-    private static final String TAG = ScannerFragment.class.getSimpleName();
+    private final String TAG = ScannerFragment.class.getSimpleName();
 
     /**
      * Stops scanning after 5 seconds.
      */
-    private static final long SCAN_PERIOD = 5000;
+    private final long SCAN_PERIOD = 5000;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -88,9 +89,7 @@ public class ScannerFragment extends ListFragment {
 
     private boolean permissions_granted = false;
 
-    private static final int REQUEST_LOCATION = 0;
-
-    private static boolean mScanning = false;
+    private boolean mScanning = false;
 
     private Switch switchReceive;
 
@@ -225,7 +224,8 @@ public class ScannerFragment extends ListFragment {
             // Even if no new results, update 'last seen' times.
             mAdapter.notifyDataSetChanged();
 
-            MainActivity.postScanProcess(mAdapter);
+
+            ((MainActivity) getActivity()).postScanProcess(mAdapter);
 
             /*String toastText = getString(R.string.scan_stop_toast) + " "
                     + TimeUnit.SECONDS.convert(SCAN_PERIOD, TimeUnit.MILLISECONDS) + " "
@@ -233,6 +233,7 @@ public class ScannerFragment extends ListFragment {
             Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();*/
         }
     }
+
 
     /**
      * Return a List of {@link ScanFilter} objects to filter by Service UUID.

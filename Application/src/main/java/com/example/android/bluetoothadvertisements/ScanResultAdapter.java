@@ -165,45 +165,6 @@ public class ScanResultAdapter extends BaseAdapter {
         mArrayList.clear();
     }
 
-    /**
-     * Takes in a number of nanoseconds and returns a human-readable string giving a vague
-     * description of how long ago that was.
-     */
-    public static String getTimeSinceString(Context context, long timeNanoseconds) {
-        String lastSeenText = context.getResources().getString(R.string.last_seen) + " ";
-
-        long timeSince = SystemClock.elapsedRealtimeNanos() - timeNanoseconds;
-        long secondsSince = TimeUnit.SECONDS.convert(timeSince, TimeUnit.NANOSECONDS);
-
-        if (secondsSince < 5) {
-            lastSeenText += context.getResources().getString(R.string.just_now);
-        } else if (secondsSince < 60) {
-            lastSeenText += secondsSince + " " + context.getResources()
-                    .getString(R.string.seconds_ago);
-        } else {
-            long minutesSince = TimeUnit.MINUTES.convert(secondsSince, TimeUnit.SECONDS);
-            if (minutesSince < 60) {
-                if (minutesSince == 1) {
-                    lastSeenText += minutesSince + " " + context.getResources()
-                            .getString(R.string.minute_ago);
-                } else {
-                    lastSeenText += minutesSince + " " + context.getResources()
-                            .getString(R.string.minutes_ago);
-                }
-            } else {
-                long hoursSince = TimeUnit.HOURS.convert(minutesSince, TimeUnit.MINUTES);
-                if (hoursSince == 1) {
-                    lastSeenText += hoursSince + " " + context.getResources()
-                            .getString(R.string.hour_ago);
-                } else {
-                    lastSeenText += hoursSince + " " + context.getResources()
-                            .getString(R.string.hours_ago);
-                }
-            }
-        }
-
-        return lastSeenText;
-    }
 
     int byteToInt(byte bData) {
         int iData;
