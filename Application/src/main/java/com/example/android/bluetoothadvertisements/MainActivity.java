@@ -121,7 +121,7 @@ public class MainActivity extends FragmentActivity {
     private TextView viewLabelTSD;
     private TextView viewLabelStatus;
     private CheckBox viewCheckboxSink;
-    private ProgressBar viewStatusProgressBar;
+    private TextView viewDisplaySensorDataCount;
     private TextView viewDisplayNodeId;
 
     private TextView viewLabelConnectedAddress;
@@ -137,7 +137,7 @@ public class MainActivity extends FragmentActivity {
 
     private Set<BluetoothDevice> mRegisteredDevices = new HashSet<>();
 
-    private byte[] serverBuffer = new byte[3];
+    private byte[] serverBuffer = new byte[10];
 
     public static int iTSC = 120;
     public static int iTSD = 60;
@@ -165,6 +165,7 @@ public class MainActivity extends FragmentActivity {
 
     private int orientInterval = 5000; //(scan + update values + transfer data) within this time
     private Handler orientTasksHandler;
+    private Handler restartScanningHandler;
 
     private ScanResultAdapter mAdapter;
 
@@ -193,6 +194,10 @@ public class MainActivity extends FragmentActivity {
 
     private boolean scanningStartFlag = false;
 
+    private int watchDogTimer = 0;
+
+    private boolean communicationRunning = false;
+
 
 
     @Override
@@ -216,7 +221,7 @@ public class MainActivity extends FragmentActivity {
 
         viewCheckboxSink = (CheckBox) findViewById(R.id.checkboxSink);
 
-        viewStatusProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        viewDisplaySensorDataCount = (TextView) findViewById(R.id.viewSensorDataCount);
 
         viewDisplayStatus.setBackgroundColor(RED);
         viewDisplayOSI.setBackgroundColor(RED);
@@ -232,6 +237,7 @@ public class MainActivity extends FragmentActivity {
         viewDisplayNodeId.setText("Node ID: " + String.valueOf(mNodeId));
 
         orientTasksHandler = new Handler();
+        restartScanningHandler = new Handler();
 
 
         mAdapter = new ScanResultAdapter(this.getApplicationContext(),
@@ -325,6 +331,7 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            watchDogTimer = 0;
             Log.i("MainActivity",action);
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 //Callback1
@@ -359,20 +366,49 @@ public class MainActivity extends FragmentActivity {
                         Log.i("MainActivity","Call to read sensor data failed.");
                 } else {
                     Log.i("MainActivity","OSI found to be unsuitable. Disconnecting from remote device.");
+                    communicationRunning = false;
                     mBluetoothLeService.disconnect();
                 }
             } else if (BluetoothLeService.ACTION_SENSOR_DATA_AVAILABLE.equals(action)) {
                 Log.i("MainActivity","Responding to sensor data.");
-                //byte dataBuffer[];
-                //dataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+                byte sensorDataBuffer[];
+                sensorDataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
 
-                //Log.i("MainActivity","Sensor Data = " + byteToInt(dataBuffer[0]) + "," + byteToInt(dataBuffer[1]) + "," + byteToInt(dataBuffer[2]) + "," + byteToInt(dataBuffer[3]) + "," + byteToInt(dataBuffer[4]));
+                Log.i("MainActivity","Received data from the remote node in sensorDataBuffer = " + sensorDataBuffer);
 
-                if(mBluetoothLeService.writeOrientParameters(iOSI, iTSC, 0))
-                    Log.i("MainActivity","Call to write ORIENT parameters sent successfully.");
-                else {
-                    Log.i("MainActivity","Call to write ORIENT parameters failed.");
-                    mBluetoothLeService.disconnect();
+                int rxSensorDataNodeId = byteToInt(sensorDataBuffer[0]);
+                int rxSensorDataTimeStamp = (16777216*byteToInt(sensorDataBuffer[1])) + (65536*byteToInt(sensorDataBuffer[2])) + (256*byteToInt(sensorDataBuffer[3])) + byteToInt(sensorDataBuffer[4]);
+                byte rxSensorData[] = {1, 2, 3, 4, 5};
+
+                rxSensorData[0] = sensorDataBuffer[5];
+                rxSensorData[1] = sensorDataBuffer[6];
+                rxSensorData[2] = sensorDataBuffer[7];
+                rxSensorData[3] = sensorDataBuffer[8];
+                rxSensorData[4] = sensorDataBuffer[9];
+
+                Log.i("MainActivity","Sensor Data Node Id = " + String.valueOf(rxSensorDataNodeId));
+                Log.i("MainActivity","Sensor Data Time Stamp = " + String.valueOf(rxSensorDataTimeStamp));;
+                Log.i("MainActivity","Sensor Data = " + byteToInt(rxSensorData[0]) + "," + byteToInt(rxSensorData[1]) + "," + byteToInt(rxSensorData[2]) + "," + byteToInt(rxSensorData[3]) + "," + byteToInt(rxSensorData[4]));
+
+                //if sensorDataTimeStamp is non zero, this sensorDataItem must be added to the sink/relay list
+                //and the next item in the list must be read.
+                //else the client must move to write orient parameters to the server and further to close the connection
+
+
+                if (rxSensorDataTimeStamp==0) {
+                    if(mBluetoothLeService.writeOrientParameters(iOSI, iTSC, 0))
+                        Log.i("MainActivity","Call to write ORIENT parameters sent successfully.");
+                    else {
+                        Log.i("MainActivity","Call to write ORIENT parameters failed.");
+                        mBluetoothLeService.disconnect();
+                    }
+                } else {
+                    SensorData sd = new SensorData(rxSensorDataNodeId, rxSensorDataTimeStamp, rxSensorData);
+                    mSensorDataList.add(sd);
+                    if(mBluetoothLeService.readSensorData())
+                        Log.i("MainActivity","Call to read sensor data sent successfully.");
+                    else
+                        Log.i("MainActivity","Call to read sensor data failed.");
                 }
 
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
@@ -525,8 +561,6 @@ public class MainActivity extends FragmentActivity {
 
         orientTasks.run(); //This call starts running ORIENT tasks continually with auto callbacks
 
-
-
         // Initialize the local UI
         updateLocalUi();
 
@@ -552,12 +586,14 @@ public class MainActivity extends FragmentActivity {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(Constants.TAG, "BluetoothDevice CONNECTED: " + device);
                 mConnected = true;
+                communicationRunning = true;
                 Log.i("State change","Connection opened. mConnected = true;");
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(Constants.TAG, "BluetoothDevice DISCONNECTED: " + device);
                 //Remove device from any active subscriptions
                 mRegisteredDevices.remove(device);
                 mConnected = false;
+                communicationRunning = false;
                 Log.i("State change","Connection closed. mConnected = false");
             }
         }
@@ -584,14 +620,43 @@ public class MainActivity extends FragmentActivity {
                         );
             } else if (OrientProfile.SENSOR_DATA_CHARACTERISTIC.equals(characteristic.getUuid())) {
                 Log.i(Constants.TAG, "Read Sensor Data Characteristic");
-                serverBuffer[0] = 11;
-                serverBuffer[1] = 51;
-                serverBuffer[2] = 99;
-                mBluetoothGattServer.sendResponse(device,
+
+                //Using a local byte array to pick up data from the last item in the sensor data list and provide to the BLE characteristic
+                byte sensorData[] = {0,0,0,0,0,0,0,0,0,0};
+
+                if(getSensorDataCount()>0) {
+                    int lastItem = getSensorDataCount() - 1;
+
+                    //If the length of the list of sensor data items is zero, the server must respond with zeros.
+                    //If the length of the list is non-zero, the server must respond with the last item in the list.
+                    //Using a local sensorData object to buffer the last item in the sensor data list
+
+                    SensorData sd = getItem(lastItem);
+
+                    //NodeID: Byte0 of the sensor data characteristic
+                    sensorData[0] = (byte) sd.nodeId;
+                    //TimeStamp : Byte1 - Byte4 of the sensor data characteristic
+                    sensorData[1] = (byte) (sd.timeStamp / 16777216);
+                    sensorData[2] = (byte) ((sd.timeStamp % 16777216) / 65536);
+                    sensorData[3] = (byte) ((sd.timeStamp % 65536) / 256);
+                    sensorData[4] = (byte) (sd.timeStamp % 256);
+                    //SensorData: Byte5 - Byte9 of the sensor data characteristic
+                    sensorData[5] = (byte) sd.data[0];
+                    sensorData[6] = (byte) sd.data[1];
+                    sensorData[7] = (byte) sd.data[2];
+                    sensorData[8] = (byte) sd.data[3];
+                    sensorData[9] = (byte) sd.data[4];
+
+                    //Remove this sensor Data object from the sensor data list
+                    mSensorDataList.remove(lastItem);
+                }
+
+                serverSensorData.setValue(sensorData);
+                        mBluetoothGattServer.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
-                        serverBuffer);
+                        sensorData);
             } else {
                 Log.w(Constants.TAG, "Invalid Characteristic Read: " + characteristic.getUuid());
                 mBluetoothGattServer.sendResponse(device,
@@ -608,6 +673,7 @@ public class MainActivity extends FragmentActivity {
                                                  boolean preparedWrite,
                                                  boolean responseNeeded,
                                                  int offset, byte[] data) {
+
             Log.i("MainActivity","Characteristic write request received " + characteristic.getUuid().toString());
             if (characteristic.getUuid().equals(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC)) {
                 //set the OSI to the value received from the sink/relay. The sink/relay increments its own OSI value and sends it.
@@ -696,6 +762,7 @@ public class MainActivity extends FragmentActivity {
         String orientParameters = String.valueOf(iOSI) + "," + String.valueOf(iTSC) + ", " + String.valueOf(iTSD);
         //mLocalTimeView.setText(orientParameters);
         //mLocalTimeView.refreshDrawableState();
+        viewDisplaySensorDataCount.setText("Sensor Data Count : " + String.valueOf(getSensorDataCount()));
         switch(iStatus)
         {
             case 0:
@@ -708,7 +775,6 @@ public class MainActivity extends FragmentActivity {
                 viewLabelOSI.setBackgroundColor(RED);
                 viewLabelTSC.setBackgroundColor(RED);
                 viewLabelTSD.setBackgroundColor(RED);
-                viewStatusProgressBar.setVisibility(View.INVISIBLE);
                 break;
 
             case 1:
@@ -721,7 +787,6 @@ public class MainActivity extends FragmentActivity {
                 viewLabelOSI.setBackgroundColor(GREEN);
                 viewLabelTSC.setBackgroundColor(GREEN);
                 viewLabelTSD.setBackgroundColor(GREEN);
-                viewStatusProgressBar.setVisibility(View.VISIBLE);
                 break;
 
             case 2:
@@ -734,7 +799,6 @@ public class MainActivity extends FragmentActivity {
                 viewLabelOSI.setBackgroundColor(GREEN);
                 viewLabelTSC.setBackgroundColor(GREEN);
                 viewLabelTSD.setBackgroundColor(GREEN);
-                viewStatusProgressBar.setVisibility(View.VISIBLE);
                 break;
 
             default:
@@ -830,14 +894,30 @@ public class MainActivity extends FragmentActivity {
                 scanningStartFlag = false;
             }
 
+            if (communicationRunning) {
+                watchDogTimer++;
+                Log.i("MainActivity","WatchDogTimer = " + String.valueOf(watchDogTimer));
+
+                if (watchDogTimer > 5) {
+                    Log.i("MainActivity","WatchDogTimer overflow. Restarting communication loop.");
+                    watchDogTimer = 0;
+                    mBluetoothLeService.disconnect();
+                    communicationRunning = false;
+                    scannerFragment.clearScanResult();
+                    Log.i("MainActivity","Scanning started again.");
+                    restartScanningHandler.postDelayed(delayedCallToStartScanning, 5000);
+                }
+            }
+
             orientTasksHandler.postDelayed(orientTasks, 1000);
             switch (iStatus) {
                 case 0: //sensor
                     sensorDataTimer++;
                     if((AdvertiserFragment.advertising)&&(sensorDataTimer >= sensorDataRate)) {
                         sensorDataTimer = 0;
+                        byte sensorDataZeros[] = {0,0,0,0,0};
+                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000), sensorDataZeros);
 
-                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000));
 
                         //NodeID: Byte0 of the sensor data characteristic
                         sensorData[0] = (byte) sd.nodeId;
@@ -854,6 +934,8 @@ public class MainActivity extends FragmentActivity {
                         sensorData[9] = (byte) rand.nextInt(100);
 
                         mSensorDataList.add(sd);
+
+
                         serverSensorData.setValue(sensorData);
 
                         Log.i("MainActivity","Sensor Data Length = " + getSensorDataCount());
@@ -872,6 +954,7 @@ public class MainActivity extends FragmentActivity {
 
 
                 case 1: //sink
+                    updateLocalUi();
                     switch (orientTasksProgress) {
                         case 0:
                             //showMsg("Scanning");
@@ -887,7 +970,6 @@ public class MainActivity extends FragmentActivity {
                             break;
 
                         case 10:
-                            viewStatusProgressBar.setProgress(orientTasksProgress);
                             break;
 
                         default:
@@ -895,7 +977,6 @@ public class MainActivity extends FragmentActivity {
 
 
                     }
-                    viewStatusProgressBar.setProgress(orientTasksProgress);
                     if(orientTasksProgress < 10) {
                         orientTasksProgress++;
                     }
@@ -908,7 +989,8 @@ public class MainActivity extends FragmentActivity {
                     sensorDataTimer++;
                     if((AdvertiserFragment.advertising)&&(sensorDataTimer >= sensorDataRate)) {
                         sensorDataTimer = 0;
-                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000));
+                        byte sensorDataZeros[] = {0,0,0,0,0};
+                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000), sensorDataZeros);
 
                         //NodeID: Byte0 of the sensor data characteristic
                         sensorData[0] = (byte) sd.nodeId;
@@ -948,7 +1030,6 @@ public class MainActivity extends FragmentActivity {
                             break;
 
                         case 10:
-                            viewStatusProgressBar.setProgress(orientTasksProgress);
                             break;
 
                         default:
@@ -956,7 +1037,6 @@ public class MainActivity extends FragmentActivity {
 
 
                     }
-                    viewStatusProgressBar.setProgress(orientTasksProgress);
                     if(orientTasksProgress < 10) {
                         orientTasksProgress++;
                     }
@@ -1043,18 +1123,28 @@ public class MainActivity extends FragmentActivity {
         Log.i("MainActivity","Found " + numberOfDevicesFound + " devices.");
         if(numberOfDevicesFound > 0) {
             connectAndCommunicate();
+        } else {
+            if((AdvertiserFragment.advertising)&&(iStatus>0)) {
+                ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
+                scannerFragment.clearScanResult();
+                Log.i("MainActivity","Scanning started again.");
+                restartScanningHandler.postDelayed(delayedCallToStartScanning, 5000);
+            }
         }
     }
 
     public void connectAndCommunicate() {
         if(scanResultIndex<numberOfDevicesFound) {
             Log.i("MainActivity","Connecting to list item " + scanResultIndex);
+            communicationRunning = true;
             mBluetoothLeService.connect(scanResultsList.get(scanResultIndex).getDevice().getAddress());
             scanResultIndex++;
         } else {
             Log.i("MainActivity","Reached end of list of devices.");
             scanResultIndex = 0;
             if(iStatus > 0) {//iStatus = 0 for sensor. iStatus = 1 for sink. iStatus = 2 for relay.
+                ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
+                scannerFragment.clearScanResult();
                 startScanning();
                 Log.i("MainActivity","Scanning started again.");
             }
@@ -1068,6 +1158,7 @@ public class MainActivity extends FragmentActivity {
     public SensorData getItem (int position) {
         return mSensorDataList.get(position);
     }
+
 
     /**
      * Clear out the sensor data buffer.
@@ -1093,4 +1184,10 @@ public class MainActivity extends FragmentActivity {
         return false;
     }
 
+    //This is the handler for the escape process that closes a stuck communication loop and restarts scanning
+    Runnable delayedCallToStartScanning = new Runnable() {
+        public void run() {
+            startScanning();
+        }
+    };
 }

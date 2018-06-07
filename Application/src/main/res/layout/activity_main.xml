@@ -44,22 +44,33 @@
                 android:onClick="changeStatus"
                 android:text="Sink" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="82dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:max="10"
-                android:progress="0"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/viewNodeId"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Node ID:" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/viewNodeId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Node ID :" />
+
+                <TextView
+                    android:id="@+id/viewSensorDataCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sensor Data Count : " />
+
+                <TextView
+                    android:id="@+id/viewDataProduced"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sensor Data Produced :" />
+            </LinearLayout>
 
         </LinearLayout>
 
