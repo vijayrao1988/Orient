@@ -123,6 +123,8 @@ public class MainActivity extends FragmentActivity {
     private CheckBox viewCheckboxSink;
     private TextView viewDisplaySensorDataCount;
     private TextView viewDisplayNodeId;
+    private TextView viewDisplaySensorDataProduced;
+    private TextView viewDisplaySensorDataRecorded;
 
     private TextView viewLabelConnectedAddress;
     private TextView viewLabelConnectedOSI;
@@ -138,6 +140,7 @@ public class MainActivity extends FragmentActivity {
     private Set<BluetoothDevice> mRegisteredDevices = new HashSet<>();
 
     private byte[] serverBuffer = new byte[10];
+    private byte[] sensorDataChar = {0,0,0,0,0,0,0,0,0,0};
 
     public static int iTSC = 120;
     public static int iTSD = 60;
@@ -181,6 +184,8 @@ public class MainActivity extends FragmentActivity {
 
     static private int sensorDataRate = 10; //ONCE IN THIS MANY SECONDS
     static private int sensorDataTimer = 0; //Incremented every second using runnable orientTasks
+    private int sensorDataProduced = 0; //The total number of sensor data units produced by this node
+    private int sensorDataRecorded = 0; //The total number of sensor data units recorded to a file by this sink node
 
     Random rand = new Random();
     private int mNodeId = rand.nextInt(100);
@@ -218,10 +223,10 @@ public class MainActivity extends FragmentActivity {
         viewLabelStatus = (TextView) findViewById(R.id.labelStatus);
 
         viewDisplayNodeId = (TextView) findViewById(R.id.viewNodeId);
-
         viewCheckboxSink = (CheckBox) findViewById(R.id.checkboxSink);
-
         viewDisplaySensorDataCount = (TextView) findViewById(R.id.viewSensorDataCount);
+        viewDisplaySensorDataProduced = (TextView) findViewById(R.id.viewDataProduced);
+        viewDisplaySensorDataRecorded = (TextView) findViewById(R.id.viewDataRecorded);
 
         viewDisplayStatus.setBackgroundColor(RED);
         viewDisplayOSI.setBackgroundColor(RED);
@@ -374,7 +379,7 @@ public class MainActivity extends FragmentActivity {
                 byte sensorDataBuffer[];
                 sensorDataBuffer = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
 
-                Log.i("MainActivity","Received data from the remote node in sensorDataBuffer = " + sensorDataBuffer);
+                Log.i("MainActivity","Received data from the remote node in sensorDataBuffer = " + sensorDataBuffer.toString());
 
                 int rxSensorDataNodeId = byteToInt(sensorDataBuffer[0]);
                 int rxSensorDataTimeStamp = (16777216*byteToInt(sensorDataBuffer[1])) + (65536*byteToInt(sensorDataBuffer[2])) + (256*byteToInt(sensorDataBuffer[3])) + byteToInt(sensorDataBuffer[4]);
@@ -385,30 +390,68 @@ public class MainActivity extends FragmentActivity {
                 rxSensorData[2] = sensorDataBuffer[7];
                 rxSensorData[3] = sensorDataBuffer[8];
                 rxSensorData[4] = sensorDataBuffer[9];
+                SensorData sd = new SensorData(rxSensorDataNodeId, rxSensorDataTimeStamp, rxSensorData);
 
                 Log.i("MainActivity","Sensor Data Node Id = " + String.valueOf(rxSensorDataNodeId));
                 Log.i("MainActivity","Sensor Data Time Stamp = " + String.valueOf(rxSensorDataTimeStamp));;
-                Log.i("MainActivity","Sensor Data = " + byteToInt(rxSensorData[0]) + "," + byteToInt(rxSensorData[1]) + "," + byteToInt(rxSensorData[2]) + "," + byteToInt(rxSensorData[3]) + "," + byteToInt(rxSensorData[4]));
+                Log.i("MainActivity","Sensor Data = " + String.valueOf(byteToInt(rxSensorData[0])) + "," + String.valueOf(byteToInt(rxSensorData[1])) + "," + String.valueOf(byteToInt(rxSensorData[2])) + "," + String.valueOf(byteToInt(rxSensorData[3])) + "," + String.valueOf(byteToInt(rxSensorData[4])));
 
                 //if sensorDataTimeStamp is non zero, this sensorDataItem must be added to the sink/relay list
                 //and the next item in the list must be read.
                 //else the client must move to write orient parameters to the server and further to close the connection
 
 
-                if (rxSensorDataTimeStamp==0) {
-                    if(mBluetoothLeService.writeOrientParameters(iOSI, iTSC, 0))
-                        Log.i("MainActivity","Call to write ORIENT parameters sent successfully.");
-                    else {
-                        Log.i("MainActivity","Call to write ORIENT parameters failed.");
-                        mBluetoothLeService.disconnect();
-                    }
-                } else {
-                    SensorData sd = new SensorData(rxSensorDataNodeId, rxSensorDataTimeStamp, rxSensorData);
+                if (rxSensorDataTimeStamp!=0) {
                     mSensorDataList.add(sd);
                     if(mBluetoothLeService.readSensorData())
                         Log.i("MainActivity","Call to read sensor data sent successfully.");
                     else
                         Log.i("MainActivity","Call to read sensor data failed.");
+
+                } else {
+                    //When the sensorDataTimeStamp is zero, the end of the sensor data in the remote node has been reached,
+                    //a sink node must record all the data from the sensor data list in a file now before ORIENTing the remote node
+                    //We check if there is data recorded or if the remote node had no data. If this node is a sink, it must record the data to a file.
+                    if((iStatus==1)&&(getSensorDataCount()>0)) {
+                        int lastItem = getSensorDataCount() - 1;
+
+                        //Using a local sensorData object to buffer the last item in the sensor data list
+
+                        try {
+                            file.createNewFile();
+
+                            int index = 0;
+                            outputStream = new FileOutputStream(new File(file.getAbsoluteFile().toString()), true);
+                            //Write the present time to the file so as to maintain a record of when the data was received at the sink
+                            fileContents = "\r\nReceived at the sink at " + String.valueOf(((int)(currentTimeMillis()/1000))) + "\r\n";
+                            outputStream.write(fileContents.getBytes());
+                            Log.i("MainActivity", "Writing to file : " + fileContents);
+
+                            for (index=lastItem; index>=0; index--) { //Loop from last item in the list to the zeroth item
+                                SensorData sensorData = getItem(index); //Capture the information of this data into a local object
+                                //Prepare this information to write into a file
+                                fileContents = (String.valueOf(sensorData.nodeId) + " : " + String.valueOf(sensorData.timeStamp) + " : " + String.valueOf(byteToInt(sensorData.data[0])) + "," + String.valueOf(byteToInt(sensorData.data[1])) + "," + String.valueOf(byteToInt(sensorData.data[2])) + "," + String.valueOf(byteToInt(sensorData.data[3])) + "," + String.valueOf(byteToInt(sensorData.data[4])) + "\r\n");
+                                outputStream.write(fileContents.getBytes());
+                                Log.i("MainActivity", "Writing to file : " + fileContents);
+                                //Remove this data item from the data buffer after it has been written to file
+                                mSensorDataList.remove(index);
+                                Log.i("MainActivity", "Removing item " + index + "from local buffer.");
+                                //Increment the number of data units recorded to display on the UI
+                                sensorDataRecorded++;
+                            }
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.i("MainActivity","Error in writing to file.");
+                        }
+
+                        if(mBluetoothLeService.writeOrientParameters(iOSI, iTSC, 0))
+                            Log.i("MainActivity","Call to write ORIENT parameters sent successfully.");
+                        else {
+                            Log.i("MainActivity","Call to write ORIENT parameters failed.");
+                            mBluetoothLeService.disconnect();
+                        }
+                    }
                 }
 
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
@@ -586,14 +629,12 @@ public class MainActivity extends FragmentActivity {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(Constants.TAG, "BluetoothDevice CONNECTED: " + device);
                 mConnected = true;
-                communicationRunning = true;
                 Log.i("State change","Connection opened. mConnected = true;");
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(Constants.TAG, "BluetoothDevice DISCONNECTED: " + device);
                 //Remove device from any active subscriptions
                 mRegisteredDevices.remove(device);
                 mConnected = false;
-                communicationRunning = false;
                 Log.i("State change","Connection closed. mConnected = false");
             }
         }
@@ -619,44 +660,57 @@ public class MainActivity extends FragmentActivity {
                         serverBuffer
                         );
             } else if (OrientProfile.SENSOR_DATA_CHARACTERISTIC.equals(characteristic.getUuid())) {
-                Log.i(Constants.TAG, "Read Sensor Data Characteristic");
+                Log.i("GattServer", "Read Sensor Data Characteristic");
 
-                //Using a local byte array to pick up data from the last item in the sensor data list and provide to the BLE characteristic
-                byte sensorData[] = {0,0,0,0,0,0,0,0,0,0};
+                //Initialize the sensorDataChar to zero so that if there is no data, zeros gets transmitted thereby indicating absence of data.
+                sensorDataChar[0] = 0;
+                sensorDataChar[1] = 0;
+                sensorDataChar[2] = 0;
+                sensorDataChar[3] = 0;
+                sensorDataChar[4] = 0;
+                sensorDataChar[5] = 0;
+                sensorDataChar[6] = 0;
+                sensorDataChar[7] = 0;
+                sensorDataChar[8] = 0;
+                sensorDataChar[9] = 0;
 
+
+                //If the length of the list of sensor data items is zero, the server must respond with zeros.
+                //therefore the below code of retrieving sensor data and responding with it, is performed only if sensordatalength > 0
                 if(getSensorDataCount()>0) {
                     int lastItem = getSensorDataCount() - 1;
 
-                    //If the length of the list of sensor data items is zero, the server must respond with zeros.
-                    //If the length of the list is non-zero, the server must respond with the last item in the list.
-                    //Using a local sensorData object to buffer the last item in the sensor data list
+                    //Using a local byte array to pick up data from the last item in the sensor data list and provide to the BLE characteristic
+                    SensorData SDPacket = getItem(lastItem);
 
-                    SensorData sd = getItem(lastItem);
+                    //If the length of the list is non-zero, the server must respond with the last item in the list.
 
                     //NodeID: Byte0 of the sensor data characteristic
-                    sensorData[0] = (byte) sd.nodeId;
+                    sensorDataChar[0] = (byte) SDPacket.nodeId;
                     //TimeStamp : Byte1 - Byte4 of the sensor data characteristic
-                    sensorData[1] = (byte) (sd.timeStamp / 16777216);
-                    sensorData[2] = (byte) ((sd.timeStamp % 16777216) / 65536);
-                    sensorData[3] = (byte) ((sd.timeStamp % 65536) / 256);
-                    sensorData[4] = (byte) (sd.timeStamp % 256);
+                    sensorDataChar[1] = (byte) (SDPacket.timeStamp / 16777216);
+                    sensorDataChar[2] = (byte) ((SDPacket.timeStamp % 16777216) / 65536);
+                    sensorDataChar[3] = (byte) ((SDPacket.timeStamp % 65536) / 256);
+                    sensorDataChar[4] = (byte) (SDPacket.timeStamp % 256);
                     //SensorData: Byte5 - Byte9 of the sensor data characteristic
-                    sensorData[5] = (byte) sd.data[0];
-                    sensorData[6] = (byte) sd.data[1];
-                    sensorData[7] = (byte) sd.data[2];
-                    sensorData[8] = (byte) sd.data[3];
-                    sensorData[9] = (byte) sd.data[4];
+                    sensorDataChar[5] = SDPacket.data[0];
+                    sensorDataChar[6] = SDPacket.data[1];
+                    sensorDataChar[7] = SDPacket.data[2];
+                    sensorDataChar[8] = SDPacket.data[3];
+                    sensorDataChar[9] = SDPacket.data[4];
 
+                    Log.i("GattServer","Responding with sensor data buffer = " + sensorDataChar.toString());
+                    Log.i("GattServer", SDPacket.nodeId + " : " + SDPacket.timeStamp + " : " + String.valueOf(SDPacket.data[0])+","+String.valueOf(SDPacket.data[1])+","+String.valueOf(SDPacket.data[2])+","+String.valueOf(SDPacket.data[3])+","+String.valueOf(SDPacket.data[4]));
                     //Remove this sensor Data object from the sensor data list
                     mSensorDataList.remove(lastItem);
                 }
 
-                serverSensorData.setValue(sensorData);
-                        mBluetoothGattServer.sendResponse(device,
+                serverSensorData.setValue(sensorDataChar);
+                mBluetoothGattServer.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
-                        sensorData);
+                        sensorDataChar);
             } else {
                 Log.w(Constants.TAG, "Invalid Characteristic Read: " + characteristic.getUuid());
                 mBluetoothGattServer.sendResponse(device,
@@ -763,6 +817,8 @@ public class MainActivity extends FragmentActivity {
         //mLocalTimeView.setText(orientParameters);
         //mLocalTimeView.refreshDrawableState();
         viewDisplaySensorDataCount.setText("Sensor Data Count : " + String.valueOf(getSensorDataCount()));
+        viewDisplaySensorDataProduced.setText("Sensor Data Produced : " + String.valueOf(sensorDataProduced));
+        viewDisplaySensorDataRecorded.setText("Sensor Data Recorded : " + String.valueOf(sensorDataRecorded));
         switch(iStatus)
         {
             case 0:
@@ -775,6 +831,7 @@ public class MainActivity extends FragmentActivity {
                 viewLabelOSI.setBackgroundColor(RED);
                 viewLabelTSC.setBackgroundColor(RED);
                 viewLabelTSD.setBackgroundColor(RED);
+                viewDisplaySensorDataRecorded.setVisibility(View.INVISIBLE);
                 break;
 
             case 1:
@@ -787,6 +844,7 @@ public class MainActivity extends FragmentActivity {
                 viewLabelOSI.setBackgroundColor(GREEN);
                 viewLabelTSC.setBackgroundColor(GREEN);
                 viewLabelTSD.setBackgroundColor(GREEN);
+                viewDisplaySensorDataRecorded.setVisibility(View.VISIBLE);
                 break;
 
             case 2:
@@ -799,6 +857,7 @@ public class MainActivity extends FragmentActivity {
                 viewLabelOSI.setBackgroundColor(GREEN);
                 viewLabelTSC.setBackgroundColor(GREEN);
                 viewLabelTSD.setBackgroundColor(GREEN);
+                viewDisplaySensorDataRecorded.setVisibility(View.INVISIBLE);
                 break;
 
             default:
@@ -820,6 +879,7 @@ public class MainActivity extends FragmentActivity {
             iTSD = 0;
             iStatus = 1;
             sink = true;
+            sensorDataRecorded = 0;
 
             if(isExternalStorageWritable()) {
                 Log.i("MainActivity","External Storage Writable.");
@@ -829,14 +889,14 @@ public class MainActivity extends FragmentActivity {
 
             fileName = String.valueOf(((int)(currentTimeMillis()/1000)));
             fileName = fileName + ".txt";
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileName);
-            Log.i("MainActivity","Sink File Name : " + fileName);
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileName);
+            Log.i("MainActivity","Sink File Name : " + fileName + "\r\n");
 
             try {
                 file.createNewFile();
 
                 outputStream = new FileOutputStream (new File(file.getAbsoluteFile().toString()), true);
-                fileContents = "NodeID : UnixTime(Epoch) : Data";
+                fileContents = "NodeID : UnixTime(Epoch) : Data\r\n";
                 outputStream.write(fileContents.getBytes());
                 Log.i("MainActivity","Writing to file : " + fileContents);
                 outputStream.close();
@@ -878,7 +938,7 @@ public class MainActivity extends FragmentActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        stopScanning();
+        //stopScanning();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
     }
@@ -887,7 +947,7 @@ public class MainActivity extends FragmentActivity {
         public void run() {
             ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
             byte parameters[] = {(byte) iOSI, (byte) iTSC, (byte) iTSD};
-            byte sensorData[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            byte sensorDataChar[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
             if (scanningStartFlag) {
                 startScanning();
@@ -915,33 +975,38 @@ public class MainActivity extends FragmentActivity {
                     sensorDataTimer++;
                     if((AdvertiserFragment.advertising)&&(sensorDataTimer >= sensorDataRate)) {
                         sensorDataTimer = 0;
-                        byte sensorDataZeros[] = {0,0,0,0,0};
-                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000), sensorDataZeros);
+                        byte sensorData[] = {0,0,0,0,0};
+                        sensorData[0] = (byte) rand.nextInt(100);
+                        sensorData[1] = (byte) rand.nextInt(100);
+                        sensorData[2] = (byte) rand.nextInt(100);
+                        sensorData[3] = (byte) rand.nextInt(100);
+                        sensorData[4] = (byte) rand.nextInt(100);
+                        SensorData SDPacket = new SensorData(mNodeId, (int)(currentTimeMillis()/1000), sensorData);
 
 
                         //NodeID: Byte0 of the sensor data characteristic
-                        sensorData[0] = (byte) sd.nodeId;
+                        sensorDataChar[0] = (byte) SDPacket.nodeId;
                         //TimeStamp : Byte1 - Byte4 of the sensor data characteristic
-                        sensorData[1] = (byte) (sd.timeStamp / 16777216);
-                        sensorData[2] = (byte) ((sd.timeStamp % 16777216) / 65536);
-                        sensorData[3] = (byte) ((sd.timeStamp % 65536) / 256);
-                        sensorData[4] = (byte) (sd.timeStamp % 256);
+                        sensorDataChar[1] = (byte) (SDPacket.timeStamp / 16777216);
+                        sensorDataChar[2] = (byte) ((SDPacket.timeStamp % 16777216) / 65536);
+                        sensorDataChar[3] = (byte) ((SDPacket.timeStamp % 65536) / 256);
+                        sensorDataChar[4] = (byte) (SDPacket.timeStamp % 256);
                         //SensorData: Byte5 - Byte9 of the sensor data characteristic
-                        sensorData[5] = (byte) rand.nextInt(100);
-                        sensorData[6] = (byte) rand.nextInt(100);
-                        sensorData[7] = (byte) rand.nextInt(100);
-                        sensorData[8] = (byte) rand.nextInt(100);
-                        sensorData[9] = (byte) rand.nextInt(100);
+                        sensorDataChar[5] = sensorData[0];
+                        sensorDataChar[6] = sensorData[1];
+                        sensorDataChar[7] = sensorData[2];
+                        sensorDataChar[8] = sensorData[3];
+                        sensorDataChar[9] = sensorData[4];
 
-                        mSensorDataList.add(sd);
-
-
-                        serverSensorData.setValue(sensorData);
+                        mSensorDataList.add(SDPacket);
+                        sensorDataProduced++;
+                        serverSensorData.setValue(sensorDataChar);
 
                         Log.i("MainActivity","Sensor Data Length = " + getSensorDataCount());
                         int i;
                         for(i=0;i<getSensorDataCount();i++) {
-                            Log.i("MainActivity", mSensorDataList.get(i).nodeId + " : " + mSensorDataList.get(i).timeStamp);
+                            SensorData mSD = mSensorDataList.get(i);
+                            Log.i("MainActivity", mSD.nodeId + " : " + mSD.timeStamp + " : " + String.valueOf(mSD.data[0])+","+String.valueOf(mSD.data[1])+","+String.valueOf(mSD.data[2])+","+String.valueOf(mSD.data[3])+","+String.valueOf(mSD.data[4]));
                         }
                     }
                     if(iTSD<60) {
@@ -989,30 +1054,38 @@ public class MainActivity extends FragmentActivity {
                     sensorDataTimer++;
                     if((AdvertiserFragment.advertising)&&(sensorDataTimer >= sensorDataRate)) {
                         sensorDataTimer = 0;
-                        byte sensorDataZeros[] = {0,0,0,0,0};
-                        SensorData sd = new SensorData(mNodeId, (int)(currentTimeMillis()/1000), sensorDataZeros);
+                        byte sensorData[] = {0,0,0,0,0};
+                        sensorData[0] = (byte) rand.nextInt(100);
+                        sensorData[1] = (byte) rand.nextInt(100);
+                        sensorData[2] = (byte) rand.nextInt(100);
+                        sensorData[3] = (byte) rand.nextInt(100);
+                        sensorData[4] = (byte) rand.nextInt(100);
+                        SensorData SDPacket = new SensorData(mNodeId, (int)(currentTimeMillis()/1000), sensorData);
+
 
                         //NodeID: Byte0 of the sensor data characteristic
-                        sensorData[0] = (byte) sd.nodeId;
+                        sensorDataChar[0] = (byte) SDPacket.nodeId;
                         //TimeStamp : Byte1 - Byte4 of the sensor data characteristic
-                        sensorData[1] = (byte) (sd.timeStamp / 16777216);
-                        sensorData[2] = (byte) ((sd.timeStamp % 16777216) / 65536);
-                        sensorData[3] = (byte) ((sd.timeStamp % 65536) / 256);
-                        sensorData[4] = (byte) (sd.timeStamp % 256);
+                        sensorDataChar[1] = (byte) (SDPacket.timeStamp / 16777216);
+                        sensorDataChar[2] = (byte) ((SDPacket.timeStamp % 16777216) / 65536);
+                        sensorDataChar[3] = (byte) ((SDPacket.timeStamp % 65536) / 256);
+                        sensorDataChar[4] = (byte) (SDPacket.timeStamp % 256);
                         //SensorData: Byte5 - Byte9 of the sensor data characteristic
-                        sensorData[5] = (byte) rand.nextInt(100);
-                        sensorData[6] = (byte) rand.nextInt(100);
-                        sensorData[7] = (byte) rand.nextInt(100);
-                        sensorData[8] = (byte) rand.nextInt(100);
-                        sensorData[9] = (byte) rand.nextInt(100);
+                        sensorDataChar[5] = sensorData[0];
+                        sensorDataChar[6] = sensorData[1];
+                        sensorDataChar[7] = sensorData[2];
+                        sensorDataChar[8] = sensorData[3];
+                        sensorDataChar[9] = sensorData[4];
 
-                        mSensorDataList.add(sd);
-                        serverSensorData.setValue(sensorData);
+                        mSensorDataList.add(SDPacket);
+                        sensorDataProduced++;
+                        serverSensorData.setValue(sensorDataChar);
 
                         Log.i("MainActivity","Sensor Data Length = " + getSensorDataCount());
                         int i;
                         for(i=0;i<getSensorDataCount();i++) {
-                            Log.i("MainActivity", mSensorDataList.get(i).nodeId + " : " + mSensorDataList.get(i).timeStamp);
+                            SensorData mSD = mSensorDataList.get(i);
+                            Log.i("MainActivity", mSD.nodeId + " : " + mSD.timeStamp + " : " + String.valueOf(mSD.data[0])+","+String.valueOf(mSD.data[1])+","+String.valueOf(mSD.data[2])+","+String.valueOf(mSD.data[3])+","+String.valueOf(mSD.data[4]));
                         }
                     }
                     switch (orientTasksProgress) {
