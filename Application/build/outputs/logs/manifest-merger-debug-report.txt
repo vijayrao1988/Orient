@@ -3,17 +3,17 @@ manifest
 ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
-MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:17:1-28:12
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:17:1-28:12
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:17:1-28:12
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:17:1-28:12
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:17:1-28:12
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:17:1-28:12
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:17:1-31:12
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
 	package
@@ -52,28 +52,28 @@ ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/Androi
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:27:19-63
 application
 ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:29:5-54:19
-MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:26:5-20
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:26:5-20
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:26:5-20
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:26:5-20
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:26:5-20
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:26:5-20
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:29:5-20
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:29:5-20
 	android:label
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:32:9-41
 	android:icon
@@ -88,7 +88,7 @@ ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/Androi
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:36:13-45
 	android:name
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:35:13-41
-intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
 ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:37:13-40:29
 action#android.intent.action.MAIN
 ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:38:17-69
@@ -120,32 +120,32 @@ uses-sdk
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
-MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:21:5-23:55
-MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:21:5-23:55
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:21:5-23:78
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:21:5-23:78
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:21:5-23:54
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:21:5-23:54
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:21:5-23:60
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:21:5-23:60
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:21:5-23:63
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:21:5-23:63
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:21:5-23:61
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:21:5-23:61
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:21:5-23:58
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:21:5-23:58
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:21:5-23:58
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:21:5-23:55
+MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:21:5-23:55
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:21:5-23:58
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
 	tools:overrideLibrary
-		ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:23:9-52
+		ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:23:9-52
 	android:targetSdkVersion
 		INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
@@ -155,28 +155,28 @@ INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/And
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
 		INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml
 meta-data#android.support.VERSION
-ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/e56dbfe92d0988d15ed246b8f722e79a/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/15484913968004ccbcf4794f3ffd7396/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:22:5-24:34
-MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/b5bebc3974904c7f30a8d00749c5a5d9/AndroidManifest.xml:22:5-24:34
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/be47b1207795834194486695582253ef/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1c6ed6061b5a6dd1dcb712a8b438b1b5/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/2d75c2bdb0f04e15fda82f764b8b1511/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/ff73cc61e3e44e283f2733ec1984409d/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:22:5-24:34
-MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/e0793bc9b7ba994d4dad3b872072507d/AndroidManifest.xml:22:5-24:34
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:22:5-24:34
-MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/ab83eb105569e7b6cd1d8ec037f4b865/AndroidManifest.xml:22:5-24:34
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:25:5-27:34
-MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/df64f06ebbdb18d140d41787f62569a0/AndroidManifest.xml:25:5-27:34
+ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:cardview-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/cardview-v7-25.3.1.aar/ff5f778ba7dca4b74d0ec54c3fc376dc/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-fragment:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-fragment-25.3.1.aar/48aaa2f22ac63af72c2ee67d4c804fdb/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-media-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-media-compat-25.3.1.aar/1d207bec5a031414b891868b81a73580/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-utils:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-utils-25.3.1.aar/505ee7d3abbd5f297e1c634e42d0cf81/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-core-ui-25.3.1.aar/dfb60edfabb24baf5de4c3c8321add13/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:25:5-27:34
 	android:value
-		ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:27:9-31
+		ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:27:9-31
 	android:name
-		ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/f82dd8eddabba2ca4e6fc1d190b8876c/AndroidManifest.xml:26:9-47
+		ADDED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:26:9-47
