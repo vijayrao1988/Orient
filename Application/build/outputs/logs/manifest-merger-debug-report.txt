@@ -1,8 +1,8 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
-INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
-INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-57:12
+INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-57:12
+INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-57:12
 MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support:support-v4:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v4-25.3.1.aar/3de3778d8ffa20271d074ee98dbc77f8/AndroidManifest.xml:17:1-31:12
@@ -14,8 +14,8 @@ MERGED from [com.android.support:support-core-ui:25.3.1] /Users/blitz/Library/An
 MERGED from [com.android.support:animated-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/animated-vector-drawable-25.3.1.aar/89d4e95249c92259c0e085874a0fa5a7/AndroidManifest.xml:17:1-28:12
 MERGED from [com.android.support:support-vector-drawable:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-vector-drawable-25.3.1.aar/38152f9dbc9131658ab21ba351ee3a20/AndroidManifest.xml:17:1-28:12
 MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-compat-25.3.1.aar/4fabaca1dc616792c8506e024826c418/AndroidManifest.xml:17:1-31:12
-INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
-INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-56:12
+INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-57:12
+INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:17:1-57:12
 	package
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:18:5-58
 	android:versionName
@@ -51,7 +51,7 @@ ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/Androi
 	android:name
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:27:19-63
 application
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:29:5-54:19
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:29:5-55:19
 MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:29:5-20
 MERGED from [com.android.support:support-v13:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/support-v13-25.3.1.aar/3bb525d842cc1772b0319e249e0edce8/AndroidManifest.xml:29:5-20
 MERGED from [com.android.support:appcompat-v7:25.3.1] /Users/blitz/Library/Android/sdk/gradle-2.14.1/caches/transforms-1/files-1.1/appcompat-v7-25.3.1.aar/d8aeed7dfdb788d36a62e36daa29ba0a/AndroidManifest.xml:29:5-20
@@ -83,39 +83,41 @@ MERGED from [com.android.support:support-compat:25.3.1] /Users/blitz/Library/And
 	android:theme
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:33:9-40
 activity#com.example.android.bluetoothadvertisements.MainActivity
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:34:9-41:20
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:34:9-42:20
+	android:screenOrientation
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:37:13-49
 	android:label
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:36:13-45
 	android:name
 		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:35:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:37:13-40:29
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:38:13-41:29
 action#android.intent.action.MAIN
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:38:17-69
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:39:17-69
 	android:name
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:38:25-66
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:39:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:39:17-77
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:40:17-77
 	android:name
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:39:27-74
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:40:27-74
 service#com.example.android.bluetoothadvertisements.AdvertiserService
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:45:9-49:19
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:46:9-50:19
 	android:enabled
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:47:13-35
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:48:13-35
 	android:exported
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:48:13-37
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:49:13-37
 	android:name
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:46:13-46
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:47:13-46
 activity#com.example.android.bluetoothadvertisements.DeviceControlActivity
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:51:9-58
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:52:9-58
 	android:name
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:51:19-56
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:52:19-56
 service#com.example.android.bluetoothadvertisements.BluetoothLeService
-ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:53:9-77
+ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:54:9-77
 	android:enabled
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:53:53-75
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:54:53-75
 	android:name
-		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:53:18-52
+		ADDED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml:54:18-52
 uses-sdk
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/blitz/AndroidStudioProjects/Orient/Application/src/main/AndroidManifest.xml

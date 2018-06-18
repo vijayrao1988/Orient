@@ -169,6 +169,7 @@ public class MainActivity extends FragmentActivity {
     private int orientInterval = 5000; //(scan + update values + transfer data) within this time
     private Handler orientTasksHandler;
     private Handler restartScanningHandler;
+    private Handler connectAndCommunicateHandler;
 
     private ScanResultAdapter mAdapter;
 
@@ -243,6 +244,7 @@ public class MainActivity extends FragmentActivity {
 
         orientTasksHandler = new Handler();
         restartScanningHandler = new Handler();
+        connectAndCommunicateHandler = new Handler();
 
 
         mAdapter = new ScanResultAdapter(this.getApplicationContext(),
@@ -348,8 +350,12 @@ public class MainActivity extends FragmentActivity {
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.i("MainActivity","Disconnected from BLE Device");
                 mBluetoothLeService.close();
-                communicationRunning = false;
-                connectAndCommunicate();
+                if(communicationRunning == true) { //If the client has received a ACTION_GATT_DISCONNECTED without the communicationRunning flag reset, there has been an error and the remote node has called for a disconnect. So the client should react to the error and disconnect and call for a connectAndCommunicate() again.
+                    communicationRunning = false;
+                    Log.i("MainActivity","Posting a 3s delayed call to connectAndCommunicate.");
+                    connectAndCommunicateHandler.postDelayed(connectAndCommunicateRunnable, 3000);
+                }
+
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Get all the supported services and characteristics on the user interface and write Orient Parameters
                 Log.i("MainActivity","Services discovered successfully");
@@ -374,6 +380,8 @@ public class MainActivity extends FragmentActivity {
                     Log.i("MainActivity","OSI found to be unsuitable. Disconnecting from remote device.");
                     communicationRunning = false;
                     mBluetoothLeService.disconnect();
+                    Log.i("MainActivity","Posting a 3s delayed call to connectAndCommunicate.");
+                    connectAndCommunicateHandler.postDelayed(connectAndCommunicateRunnable, 3000); //Provide an extended time of 3 seconds for the BLE Service to disconnect from an erroneous link
                 }
             } else if (BluetoothLeService.ACTION_SENSOR_DATA_AVAILABLE.equals(action)) {
                 Log.i("MainActivity","Responding to sensor data.");
@@ -508,11 +516,12 @@ public class MainActivity extends FragmentActivity {
                 Log.i("MainActivity","Data received : " + byteToInt(dataBuffer[0]) + "," + byteToInt(dataBuffer[1]) + ":" + byteToInt(dataBuffer[2]));
 
             } else if (BluetoothLeService.ACTION_CHARACTERISTIC_WRITTEN.equals(action)) {
-                if(action.toString().equalsIgnoreCase(OrientProfile.ORIENT_PARAMETERS_CHARACTERISTIC.toString())) {
-                    Log.i("Server","ORIENT Parameters written.");
-
-                }
+                Log.i("Server","ORIENT Parameters written.");
+                //Client is actively closing the connection as procedure is over
                 mBluetoothLeService.disconnect();
+                communicationRunning = false;
+                Log.i("MainActivity","Posting a 3s delayed call to connectAndCommunicate.");
+                connectAndCommunicateHandler.postDelayed(connectAndCommunicateRunnable, 3000); //Provide an extended time of 3 seconds for the BLE Service to disconnect from an erroneous link
             }
         }
     };
@@ -998,7 +1007,7 @@ public class MainActivity extends FragmentActivity {
         public void run() {
             ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
             byte parameters[] = {(byte) iOSI, (byte) iTSC, (byte) iTSD};
-            byte sensorDataChar[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            byte sensorDataChar[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
             if (scanningStartFlag) {
                 startScanning();
@@ -1012,8 +1021,11 @@ public class MainActivity extends FragmentActivity {
                 if (watchDogTimer > 15) {
                     Log.i("MainActivity","WatchDogTimer overflow. Process will continue with next iteration of the communication loop after disconnect.");
                     watchDogTimer = 0;
+                    //Client is actively closing the connection as the watchdogtimer has overflowed
                     mBluetoothLeService.disconnect();
                     communicationRunning = false;
+                    Log.i("MainActivity","Posting a 3s delayed call to connectAndCommunicate.");
+                    connectAndCommunicateHandler.postDelayed(connectAndCommunicateRunnable, 3000); //Provide an extended time of 5 seconds for the BLE Service to disconnect from an erroneous link
                 }
             }
 
@@ -1243,7 +1255,8 @@ public class MainActivity extends FragmentActivity {
         scanResultIndex = 0;
         Log.i("MainActivity","Found " + numberOfDevicesFound + " devices.");
         if(numberOfDevicesFound > 0) {
-            connectAndCommunicate();
+            Log.i("MainActivity","Posting a 1s delayed call to connectAndCommunicate.");
+            connectAndCommunicateHandler.postDelayed(connectAndCommunicateRunnable, 1000);
         } else {
             if(iStatus>0) {
                 ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
@@ -1256,7 +1269,8 @@ public class MainActivity extends FragmentActivity {
 
     public void connectAndCommunicate() {
         Log.i("MainActivity","ConnectAndCommunicate " + scanResultIndex);
-        if(scanResultIndex<numberOfDevicesFound) {
+        numberOfDevicesFound = mAdapter.getCount();
+        if((numberOfDevicesFound>0)&&(scanResultIndex<numberOfDevicesFound)) {
             Log.i("MainActivity","Connecting to list item " + scanResultIndex);
             communicationRunning = true;
             mBluetoothLeService.connect(scanResultsList.get(scanResultIndex).getDevice().getAddress());
@@ -1268,7 +1282,7 @@ public class MainActivity extends FragmentActivity {
                 ScannerFragment scannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.scanner_fragment_container);
                 scannerFragment.clearScanResult();
 
-                Log.i("MainActivity","Scanning started again.");
+                Log.i("MainActivity","Scanning shall start again after 5 seconds.");
                 restartScanningHandler.postDelayed(delayedCallToStartScanning, 5000);
             }
         }
@@ -1311,6 +1325,13 @@ public class MainActivity extends FragmentActivity {
     Runnable delayedCallToStartScanning = new Runnable() {
         public void run() {
             startScanning();
+        }
+    };
+
+    //This is the runnable for the connectAndCommunicate process so that connectAndCommunicate can be called after a small differentiating time gap
+    Runnable connectAndCommunicateRunnable = new Runnable() {
+        public void run() {
+            connectAndCommunicate();
         }
     };
 }
